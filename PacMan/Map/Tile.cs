@@ -30,7 +30,7 @@ namespace PacMan.Map
         }
         public void DrawTile()
         {
-            Game1._spriteBatch.Draw(texture, rectangle, Color.White);
+            Game1._spriteBatch.Draw(this.texture, this.rectangle, Color.White);
         }
     }
 }

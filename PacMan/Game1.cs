@@ -10,15 +10,15 @@ namespace PacMan
         public static GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
 
-        public static string PathToTiles { get; set; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Map\\TileImages\\";
+        public static string PathToTiles { get; set; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
         public static int NumOfRows { get; } = 36;
         public static int NumOfCols { get; } = 28;
         public static int TileWidth { get; } = 24;
         public static int TileHeight { get; } = 24;
-        public static int NumOfTiles { get; } = 3;
+        public static int NumOfTiles { get; } = 25;
 
-        private int windowWidth = 900;
-        private int windowHeight = 950;
+        private int windowWidth = 672;
+        private int windowHeight = 864;
 
         private GameBase _game;
 
