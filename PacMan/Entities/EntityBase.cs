@@ -55,7 +55,24 @@ namespace PacMan.Entities
             this.possibleDirections.Clear();
             this.possibleDirections.Add(Direction.NONE);
 
-            Tuple<int, int> tilePosition = Tuple.Create((((int)this.position.X) / this.width), (((int)this.position.Y) / this.height));
+            int i = 0;
+            int j = 0;
+
+            if (this.direction == Direction.LEFT | this.direction == Direction.UP)
+            {
+                i = (int)Math.Ceiling((double)this.position.X / this.width);
+                j = (int)Math.Ceiling((double)this.position.Y / this.height);
+            }
+            else 
+            {
+                i = (int)Math.Floor((double)this.position.X / this.width);
+                j = (int)Math.Floor((double)this.position.Y / this.height);
+            }
+
+            //int i = (this.direction == Direction.LEFT) ? (int)Math.Ceiling((double)this.position.X / this.width) : (int)Math.Floor((double)this.position.X / this.width);
+            //int j = (this.direction == Direction.UP) ? (int)Math.Ceiling((double)this.position.Y / this.height): (int)Math.Floor((double)this.position.Y / this.height);
+
+            Tuple<int, int> tilePosition = Tuple.Create(i , j);
             
             foreach (var item in neighbourOffsets) 
             {
@@ -107,19 +124,19 @@ namespace PacMan.Entities
             {
                 case Direction.LEFT:
                     this.speed.Y = (float)0;
-                    this.speed.X = (float)-4;
+                    this.speed.X = (float)-3;
                     break;
                 case Direction.RIGHT:
                     this.speed.Y = (float)0;
-                    this.speed.X = (float)4;
+                    this.speed.X = (float)3;
                     break;
                 case Direction.UP:
                     this.speed.X = (float)0;
-                    this.speed.Y = (float)-4;
+                    this.speed.Y = (float)-3;
                     break;
                 case Direction.DOWN:
                     this.speed.X= (float)0;
-                    this.speed.Y= (float)4;
+                    this.speed.Y= (float)3;
                     break;
                 case Direction.NONE:
                     this.speed.X = (float)0;
