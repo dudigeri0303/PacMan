@@ -15,7 +15,7 @@ namespace PacMan
         public static int NumOfCols { get; } = 28;
         public static int TileWidth { get; } = 24;
         public static int TileHeight { get; } = 24;
-        public static int NumOfTiles { get; } = 25;
+        public static int NumOfTiles { get; } = 26;
 
         private int windowWidth = 672;
         private int windowHeight = 864;
