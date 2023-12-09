@@ -73,20 +73,28 @@ namespace PacMan.PacManGame
 
         private void ActionBasedOnPressedKey(Player player)
         {
-            if (this.upKeyBool == true & player.Direction != Entities.Direction.UP & player.PossibleDirections.Contains(Entities.Direction.UP))
+            //& player.PossibleDirections.Contains(Entities.Direction.UP)
+            if (this.upKeyBool == true & player.Direction != Entities.Direction.UP )
             {
+                if (!player.Collided & player.Direction != Entities.Direction.DOWN) { player.PreviousDirection = player.Direction; }
                 player.Direction = Entities.Direction.UP;
             }
-            else if (this.downKeyBool == true & player.Direction != Entities.Direction.DOWN & player.PossibleDirections.Contains(Entities.Direction.DOWN))
+            //& player.PossibleDirections.Contains(Entities.Direction.DOWN)
+            if (this.downKeyBool == true & player.Direction != Entities.Direction.DOWN )
             {
+                if (!player.Collided & player.Direction != Entities.Direction.UP) { player.PreviousDirection = player.Direction; }
                 player.Direction = Entities.Direction.DOWN;
             }
-            else if (this.leftKeyBool == true & player.Direction != Entities.Direction.LEFT & player.PossibleDirections.Contains(Entities.Direction.LEFT))
+            //& player.PossibleDirections.Contains(Entities.Direction.LEFT)
+            if (this.leftKeyBool == true & player.Direction != Entities.Direction.LEFT )
             {
+                if (!player.Collided & player.Direction != Entities.Direction.RIGHT) { player.PreviousDirection = player.Direction; }
                 player.Direction = Entities.Direction.LEFT;
             }
-            else if (this.rightKeyBool == true & player.Direction != Entities.Direction.RIGHT & player.PossibleDirections.Contains(Entities.Direction.RIGHT))
+            //& player.PossibleDirections.Contains(Entities.Direction.RIGHT)
+            if (this.rightKeyBool == true & player.Direction != Entities.Direction.RIGHT )
             {
+                if (!player.Collided & player.Direction != Entities.Direction.LEFT) { player.PreviousDirection = player.Direction; }
                 player.Direction = Entities.Direction.RIGHT;
             }
         }

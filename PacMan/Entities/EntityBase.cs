@@ -36,6 +36,14 @@ namespace PacMan.Entities
             get { return direction;}
             set { direction = value; }
         }
+        protected Direction previousDirection;
+        public Direction PreviousDirection
+        {
+            get { return previousDirection; }
+            set { previousDirection = value; }
+        }
+        protected bool collided;
+        public bool Collided { get { return collided; } }
 
         protected List<Direction> possibleDirections;
         public List<Direction> PossibleDirections { get {return possibleDirections; } }
@@ -66,6 +74,8 @@ namespace PacMan.Entities
 
             this.direction = Direction.NONE;
             this.possibleDirections = new List<Direction>();
+
+            this.collided = false;
         }
 
         private void FillPossibleDirections() 
@@ -82,6 +92,7 @@ namespace PacMan.Entities
         {
             this.FillPossibleDirections();
             this.tilesAround.Clear();
+            this.collided = false;
 
             var tileLocation = Tuple.Create((int)Math.Floor((double)this.position.X/ (double)this.width), (int)Math.Floor((double)this.position.Y/(double)this.height));
 
@@ -163,10 +174,14 @@ namespace PacMan.Entities
                     if ((int)this.horizontalAndVerticalSpeeds.X > 0) 
                     {
                         rectForCollsion.X = rect.X - Game1.TileWidth;
+                        this.direction = this.previousDirection;
+                        this.collided = true;
                     }  
                     if ((int)this.horizontalAndVerticalSpeeds.X < 0) 
                     {
                         rectForCollsion.X = rect.X + Game1.TileWidth;
+                        this.direction = this.previousDirection;
+                        this.collided = true;
                     }
                     this.position.X = rectForCollsion.X;
                 }
@@ -184,10 +199,14 @@ namespace PacMan.Entities
                     if ((int)this.horizontalAndVerticalSpeeds.Y > 0)
                     {
                         rectForCollsion.Y = rect.Y - Game1.TileHeight;
+                        this.direction = this.previousDirection;
+                        this.collided = true;
                     }
                     if ((int)this.horizontalAndVerticalSpeeds.Y < 0)
                     {
                         rectForCollsion.Y  = rect.Y + Game1.TileHeight;
+                        this.direction = this.previousDirection;
+                        this.collided = true;
                     }
                     this.position.Y = rectForCollsion.Y;
                 }
