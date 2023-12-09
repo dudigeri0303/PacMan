@@ -17,7 +17,7 @@ namespace PacMan.PacManGame
         public GameBase() 
         {
             this.tileMap = new TileMap($"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt");
-            this.player = new Player(24, 96, 24, 24);
+            this.player = new Player(48, 96, 24, 24);
             this.keyInputHandler = new KeyInputHandler();
         }
 

@@ -13,6 +13,7 @@ namespace PacMan.Map
         private int x, y, width, height;
         private Vector2 position;
         protected Rectangle rectangle;
+        public Rectangle Rect { get { return rectangle; } }
         private Texture2D texture;
         private string name;
         public string Name { get { return name; } }

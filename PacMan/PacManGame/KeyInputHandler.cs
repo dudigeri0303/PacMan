@@ -24,30 +24,30 @@ namespace PacMan.PacManGame
             if (this.keybordState.IsKeyDown(Keys.Up))
             {
                 this.upKeyBool = true;
-                this.downKeyBool = false;
+               /* this.downKeyBool = false;
                 this.leftKeyBool = false;
-                this.rightKeyBool = false;
+                this.rightKeyBool = false; */
             }
-            else if (this.keybordState.IsKeyDown(Keys.Down)) 
+            if (this.keybordState.IsKeyDown(Keys.Down)) 
             {
                 this.downKeyBool= true;
-                this.upKeyBool = false;
+               /* this.upKeyBool = false;
                 this.leftKeyBool = false;
-                this.rightKeyBool = false;
+                this.rightKeyBool = false;*/
             }
             else if (this.keybordState.IsKeyDown(Keys.Left))
             { 
                 this.leftKeyBool = true;
-                this.upKeyBool = false;
+                /*this.upKeyBool = false;
                 this.downKeyBool = false;
-                this.rightKeyBool = false;
+                this.rightKeyBool = false;*/
             }
             else if (this.keybordState.IsKeyDown(Keys.Right))
             {
                 this.rightKeyBool = true;
-                this.upKeyBool = false;
+              /*  this.upKeyBool = false;
                 this.downKeyBool = false;
-                this.leftKeyBool = false;
+                this.leftKeyBool = false; */
             }
         }
 
@@ -57,15 +57,15 @@ namespace PacMan.PacManGame
             {
                 this.upKeyBool = false;
             }
-            else if (this.keybordState.IsKeyUp(Keys.Down))
+            if (this.keybordState.IsKeyUp(Keys.Down))
             {
                 this.downKeyBool = false;
             }
-            else if (this.keybordState.IsKeyUp(Keys.Left))
+            if (this.keybordState.IsKeyUp(Keys.Left))
             {
                 this.leftKeyBool = false;
             }
-            else if (this.keybordState.IsKeyUp(Keys.Right))
+            if (this.keybordState.IsKeyUp(Keys.Right))
             {
                 this.rightKeyBool = false;
             }
