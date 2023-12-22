@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace PacMan.Entities.Ghosts.cs
 {
-    public interface IGhost
-    {
+    public enum Modes
+    { 
+        CHASE, SCATTER, FRIGHTENED
     }
 }

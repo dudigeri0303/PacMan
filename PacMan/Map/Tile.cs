@@ -16,10 +16,13 @@ namespace PacMan.Map
         public Rectangle Rect { get { return rectangle; } }
         private Texture2D texture;
         private string name;
+        public int i, j;
         public string Name { get { return name; } }
 
-        public Tile(int x, int y, int width, int height, string name)
+        public Tile(int x, int y, int width, int height, string name, int i, int j)
         {
+            this.i = i;
+            this.j = j;
             this.name = name;
             this.x = x;
             this.y = y;

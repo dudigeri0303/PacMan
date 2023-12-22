@@ -11,7 +11,7 @@ namespace PacMan.Entities.Player
     {
         public Player(int x, int y, int width, int height) : base(x, y, width, height)
         {
-            this.path = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\EntityAssets\\PlayerAssets\\";
+            this.path = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\PlayerAssets\\";
             this.fileName = "pacman_dummy24.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
         }

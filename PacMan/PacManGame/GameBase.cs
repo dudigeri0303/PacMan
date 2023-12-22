@@ -1,4 +1,5 @@
-﻿using PacMan.Entities.Player;
+﻿using PacMan.Entities.Ghosts.cs;
+using PacMan.Entities.Player;
 using PacMan.Map;
 using System;
 using System.Collections.Generic;
@@ -10,26 +11,39 @@ namespace PacMan.PacManGame
 {
     public class GameBase
     {
-        private TileMap tileMap;
         private Player player;
+        private List<GhostBase> ghosts;
         private KeyInputHandler keyInputHandler;
 
         public GameBase() 
         {
-            this.tileMap = new TileMap($"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt");
-            this.player = new Player(48, 96, 24, 24);
+            this.player = new Player(96, 96, 24, 24);
+            this.ghosts = new List<GhostBase>()
+            {
+                new Blinky(48, 96, 24, 24)
+            };
             this.keyInputHandler = new KeyInputHandler();
         }
 
         public void UpdateGame() 
         {
             this.keyInputHandler.HandleKey(this.player);
-            this.player.Update(this.tileMap);
+            this.player.Update();
+
+            foreach(var ghost in this.ghosts) 
+            {
+                ghost.UpdateGhost(this.player.TileLocation);
+            }
         }
         public void DrawGame() 
         {
-            this.tileMap.DrawTileMap();
+            TileMap.GetInstance().DrawTileMap();
             this.player.Draw();
+
+            foreach (var ghost in this.ghosts)
+            {
+                ghost.Draw();
+            }
         }
     }
 }
