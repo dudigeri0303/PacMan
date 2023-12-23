@@ -9,14 +9,14 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PacMan.Entities.Ghosts.cs
+namespace PacMan.Entities.Ghosts
 {
     public class Blinky : GhostBase
     {
         public Blinky(int x, int y, int width, int height) : base(x, y, width, height)
         {
             this.speed = 2;
-            this.movementMode = Modes.SCATTER;
+            this.movementMode = Modes.CHASE;
             this.direction = Direction.RIGHT;
             this.scatterTargetTile = TileMap.GetInstance().Tiles[24, 0];
             this.path = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
@@ -24,19 +24,10 @@ namespace PacMan.Entities.Ghosts.cs
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
         }
 
-        protected override void Chase(Tile targetTile)
+        protected override void Chase(Player.Player player)
         {
+            Tile targetTile = player.TileLocation;
             this.ChangeDirectionBasedOnTarget(targetTile);
-        }
-
-        protected override void Frightened(Tile targetTile)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Scatter()
-        {
-            this.ChangeDirectionBasedOnTarget(this.scatterTargetTile);
         }
     }
 }

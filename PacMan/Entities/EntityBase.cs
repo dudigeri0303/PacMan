@@ -32,7 +32,6 @@ namespace PacMan.Entities
         public Direction Direction
         {
             get { return direction; }
-            set { direction = value; }
         }
         protected Direction nextDirection;
         public Direction NextDirection
@@ -46,6 +45,7 @@ namespace PacMan.Entities
         protected bool illegalUpCollision, illegalDownCollision, illegalLeftCollision, illegalRightCollision;
         protected Tile tileLocation;
         public Tile TileLocation { get { return tileLocation; } }
+  
         public EntityBase(int x, int y, int width, int height)
         {
             this.width = width;
@@ -70,7 +70,7 @@ namespace PacMan.Entities
                 Tuple.Create(-1, 1)
             };
 
-            this.direction = Direction.NONE;
+            this.direction = Direction.RIGHT;
             this.possibleDirections = new List<Direction>();
 
             this.illegalDownCollision = false;

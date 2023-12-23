@@ -1,4 +1,4 @@
-﻿using PacMan.Entities.Ghosts.cs;
+﻿using PacMan.Entities.Ghosts;
 using PacMan.Entities.Player;
 using PacMan.Map;
 using System;
@@ -20,7 +20,8 @@ namespace PacMan.PacManGame
             this.player = new Player(96, 96, 24, 24);
             this.ghosts = new List<GhostBase>()
             {
-                new Blinky(48, 96, 24, 24)
+                new Blinky(48, 96, 24, 24),
+                new Pinky(96, 96, 24, 24)
             };
             this.keyInputHandler = new KeyInputHandler();
         }
@@ -32,7 +33,7 @@ namespace PacMan.PacManGame
 
             foreach(var ghost in this.ghosts) 
             {
-                ghost.UpdateGhost(this.player.TileLocation);
+                ghost.UpdateGhost(this.player);
             }
         }
         public void DrawGame() 
