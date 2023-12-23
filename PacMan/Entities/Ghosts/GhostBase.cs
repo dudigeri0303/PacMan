@@ -16,8 +16,17 @@ namespace PacMan.Entities.Ghosts
         protected Tile scatterTargetTile;
         protected bool canChangeDirection;
         protected Random random;
+
+        //Only for inky, couse he needs blinky to calc the target tile
+        protected GhostBase blinky;
+        public GhostBase Blinky { set { blinky = value; } }
+        
         public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
         {
+            this.speed = 2;
+            this.movementMode = Modes.SCATTER;
+            this.direction = Direction.RIGHT;
+            this.path = Game1.PathToGhostImages;
             this.canChangeDirection = true;
             this.random = new Random();
         }
@@ -28,7 +37,7 @@ namespace PacMan.Entities.Ghosts
         }
         protected void Frightened()
         {
-            if (TileMap.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.canChangeDirection == true)
                 {
@@ -56,6 +65,14 @@ namespace PacMan.Entities.Ghosts
             }
         }
 
+        private void ChangeMode(float seconds) 
+        {
+            Debug.WriteLine(seconds.ToString());
+            if((int)Math.Floor(seconds) % 20 == 0) { this.movementMode = Modes.SCATTER; }
+            else if((int)Math.Floor(seconds) % 7 == 0) { this.movementMode = Modes.CHASE; }
+            
+        }
+
         protected double CalcGreedyValue(Tile tile, Tile targetTile)
         {
             double value = Math.Sqrt(((tile.Rect.X - targetTile.Rect.X) * (tile.Rect.X - targetTile.Rect.X)) + ((tile.Rect.Y - targetTile.Rect.Y) * (tile.Rect.Y - targetTile.Rect.Y)));
@@ -71,7 +88,7 @@ namespace PacMan.Entities.Ghosts
 
         protected void ChangeDirectionBasedOnTarget(Tile targetTile) 
         {
-            if (TileMap.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.canChangeDirection == true)
                 {
@@ -83,22 +100,22 @@ namespace PacMan.Entities.Ghosts
                     {
                         if (dir == Direction.LEFT)
                         {
-                            Tile tileRect = TileMap.GetInstance().Tiles[this.tileLocation.i - 1, this.tileLocation.j];
+                            Tile tileRect = Map.Map.GetInstance().Tiles[this.tileLocation.i - 1, this.tileLocation.j];
                             directionsWithGreedyDistance.Add(Tuple.Create(Direction.LEFT, this.CalcGreedyValue(tileRect, targetTile)));
                         }
                         else if (dir == Direction.RIGHT)
                         {
-                            Tile tileRect = TileMap.GetInstance().Tiles[this.tileLocation.i + 1, this.tileLocation.j];
+                            Tile tileRect = Map.Map.GetInstance().Tiles[this.tileLocation.i + 1, this.tileLocation.j];
                             directionsWithGreedyDistance.Add(Tuple.Create(Direction.RIGHT, this.CalcGreedyValue(tileRect, targetTile)));
                         }
                         else if (dir == Direction.UP)
                         {
-                            Tile tileRect = TileMap.GetInstance().Tiles[this.tileLocation.i, this.tileLocation.j - 1];
+                            Tile tileRect = Map.Map.GetInstance().Tiles[this.tileLocation.i, this.tileLocation.j - 1];
                             directionsWithGreedyDistance.Add(Tuple.Create(Direction.UP, this.CalcGreedyValue(tileRect, targetTile)));
                         }
                         else if (dir == Direction.DOWN)
                         {
-                            Tile tileRect = TileMap.GetInstance().Tiles[this.tileLocation.i, this.tileLocation.j + 1];
+                            Tile tileRect = Map.Map.GetInstance().Tiles[this.tileLocation.i, this.tileLocation.j + 1];
                             directionsWithGreedyDistance.Add(Tuple.Create(Direction.DOWN, this.CalcGreedyValue(tileRect, targetTile)));
                         }
                     }
@@ -123,9 +140,10 @@ namespace PacMan.Entities.Ghosts
             this.UpdateRectValue();
         }
 
-        public void UpdateGhost(Player.Player player)
+        public void UpdateGhost(Player.Player player, float seconds)
         {
             this.UpdateTilesAround();
+            this.ChangeMode(seconds);
             this.ExecuteMovementBasedOnMode(player);
             this.Update();
         }

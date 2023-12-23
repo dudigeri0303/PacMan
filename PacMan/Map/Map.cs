@@ -8,25 +8,30 @@ using Newtonsoft.Json;
 
 namespace PacMan.Map
 {
-    public class TileMap
+    public class Map
     {
         private Tile[,] tiles;
         public Tile[,] Tiles { get { return tiles; } }
-        private static TileMap instance;
-        public static TileMap GetInstance() 
+
+        private Pellet[,] pellets;
+        public Pellet[,] Pellets { get { return pellets; } }
+
+        private static Map instance;
+        public static Map GetInstance() 
         {
             if (instance == null) 
             {
-                instance = new TileMap($"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt");
+                instance = new Map();
             }
             return instance; 
         }
         private List<Tuple<int, int>> intersections;
         public List<Tuple<int, int>> Intersections { get { return intersections; } }
 
-        private TileMap(string filePath)
+        private Map()
         {
-            tiles = new Tile[Game1.NumOfCols, Game1.NumOfRows];
+            this.tiles = new Tile[Game1.NumOfCols, Game1.NumOfRows];
+            this.pellets = new Pellet[Game1.NumOfCols, Game1.NumOfRows];
             this.intersections = new List<Tuple<int, int>>() 
             {
                 Tuple.Create(1, 4), Tuple.Create(6, 4), Tuple.Create(12, 4), Tuple.Create(15, 4), Tuple.Create(21, 4),  Tuple.Create(26, 4), 
@@ -40,7 +45,8 @@ namespace PacMan.Map
                 Tuple.Create(1, 29), Tuple.Create(3, 29), Tuple.Create(6, 29), Tuple.Create(9, 29), Tuple.Create(12, 29), Tuple.Create(15, 29), Tuple.Create(18, 29), Tuple.Create(21, 29), Tuple.Create(24, 29), Tuple.Create(26, 29),
                 Tuple.Create(1, 32), Tuple.Create(12, 32), Tuple.Create(15, 32), Tuple.Create(26, 32)
             };
-            DeserializeAndFillTiles(filePath);
+            DeserializeAndFillTiles(Game1.PathToTileArray);
+            DeserializeAndFillPellets(Game1.PathToPelletArray);
         }
 
 
@@ -52,10 +58,29 @@ namespace PacMan.Map
             {
                 for (int j = 0; j < Game1.NumOfRows; j++)
                 {
-                    this.tiles[i, j] = new Tile(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"tile{deserialzedArray[i, j].ToString()}.png", i, j);
+                    this.tiles[i, j] = new Tile(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"tile{deserialzedArray[i, j].ToString()}.png", i, j, Game1.PathToTileImages);
                 }
             }
+        }
 
+        private void DeserializeAndFillPellets(string filePath) 
+        {
+            int[,] deserialzedArray = JsonConvert.DeserializeObject<int[,]>(File.ReadAllText(filePath));
+
+            for (int i = 0; i < Game1.NumOfCols; i++)
+            {
+                for (int j = 0; j < Game1.NumOfRows; j++)
+                {
+                    if (deserialzedArray[i, j] == 25)
+                    {
+                        this.pellets[i, j] = new Pellet(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"pellet_test.png", i, j, Game1.PathToPelletImages);
+                    }
+                    else 
+                    {
+                        this.pellets[i, j] = new Pellet(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"empty_pellet.png", i, j, Game1.PathToPelletImages);
+                    }
+                }
+            }
         }
 
         public void DrawTileMap()
@@ -65,6 +90,7 @@ namespace PacMan.Map
                 for (int j = 0; j < Game1.NumOfRows; j++)
                 {
                     this.tiles[i, j].DrawTile();
+                    this.pellets[i, j].DrawTile();
                 }
             }
         }

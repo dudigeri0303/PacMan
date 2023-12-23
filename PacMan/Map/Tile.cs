@@ -14,12 +14,15 @@ namespace PacMan.Map
         private Vector2 position;
         protected Rectangle rectangle;
         public Rectangle Rect { get { return rectangle; } }
-        private Texture2D texture;
-        private string name;
+        protected Texture2D texture;
+        protected string name;
         public int i, j;
-        public string Name { get { return name; } }
+        public string Name { 
+            get { return name; } 
+            set { name = value; }
+        }
 
-        public Tile(int x, int y, int width, int height, string name, int i, int j)
+        public Tile(int x, int y, int width, int height, string name, int i, int j, string path)
         {
             this.i = i;
             this.j = j;
@@ -28,9 +31,9 @@ namespace PacMan.Map
             this.y = y;
             this.width = width;
             this.height = height;
-            position = new Vector2(this.x, this.y);
-            rectangle = new Rectangle((int)position.X, (int)position.Y, this.width, this.height);
-            texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToTiles + this.name);
+            this.position = new Vector2(this.x, this.y);
+            this.rectangle = new Rectangle((int)position.X, (int)position.Y, this.width, this.height);
+            this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, path + this.name);
         }
         public void DrawTile()
         {

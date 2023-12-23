@@ -45,7 +45,7 @@ namespace PacMan.Entities
         protected bool illegalUpCollision, illegalDownCollision, illegalLeftCollision, illegalRightCollision;
         protected Tile tileLocation;
         public Tile TileLocation { get { return tileLocation; } }
-  
+
         public EntityBase(int x, int y, int width, int height)
         {
             this.width = width;
@@ -54,9 +54,9 @@ namespace PacMan.Entities
 
             this.position = new Vector2((float)x, (float)y);
             this.rectangle = new Rectangle((int)this.position.X, (int)this.position.Y, width, height);
-            
-            
-            this.tilesAround = new List<Rectangle>();    
+
+
+            this.tilesAround = new List<Rectangle>();
             this.tileOffsetsAround = new List<Tuple<int, int>>()
             {
                 Tuple.Create(0, 0),
@@ -79,7 +79,7 @@ namespace PacMan.Entities
             this.illegalRightCollision = false;
         }
 
-        protected void FillPossibleDirections() 
+        protected void FillPossibleDirections()
         {
             this.possibleDirections.Clear();
             if (!this.illegalLeftCollision) { this.possibleDirections.Add(Direction.LEFT); }
@@ -92,27 +92,27 @@ namespace PacMan.Entities
             this.illegalUpCollision = false;
         }
 
-        protected void UpdateTilesAround() 
+        protected void UpdateTilesAround()
         {
             this.FillPossibleDirections();
             this.tilesAround.Clear();
 
-            int i = this.direction == Direction.LEFT? 
+            int i = this.direction == Direction.LEFT ?
                 (int)Math.Ceiling((double)this.position.X / (double)this.width) : (int)Math.Floor((double)this.position.X / (double)this.width);
 
-            int j = this.direction == Direction.UP? 
+            int j = this.direction == Direction.UP ?
                 (int)Math.Ceiling((double)this.position.Y / (double)this.height) : (int)Math.Floor((double)this.position.Y / (double)this.height);
 
             var tileLocation = Tuple.Create(i, j);
-            this.tileLocation = TileMap.GetInstance().Tiles[tileLocation.Item1, tileLocation.Item2];
+            this.tileLocation = Map.Map.GetInstance().Tiles[tileLocation.Item1, tileLocation.Item2];
 
 
-            foreach (var tile in this.tileOffsetsAround) 
+            foreach (var tile in this.tileOffsetsAround)
             {
                 var tileIndex = Tuple.Create(tileLocation.Item1 + tile.Item1, tileLocation.Item2 + tile.Item2);
-                if (TileMap.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Name.ElementAt(4).ToString() != "0")
+                if (Map.Map.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Name.ElementAt(4).ToString() != "0")
                 {
-                    this.tilesAround.Add(TileMap.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Rect);
+                    this.tilesAround.Add(Map.Map.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Rect);
                     if (tile.Item1 == 1 & tile.Item2 == 0 & this.possibleDirections.Contains(Direction.RIGHT))
                     {
                         this.possibleDirections.Remove(Direction.RIGHT);
@@ -133,7 +133,7 @@ namespace PacMan.Entities
             }
         }
 
-        protected void UpdateDirection() 
+        protected void UpdateDirection()
         {
             if (this.possibleDirections.Contains(this.nextDirection) & this.nextDirection != this.direction)
             {
@@ -143,12 +143,12 @@ namespace PacMan.Entities
         }
 
         protected void UpdateSpeedVectorBasedOnDirection()
-        {   
+        {
             switch (this.direction)
             {
                 case Direction.LEFT:
                     this.horizontalAndVerticalSpeeds.Y = (float)0;
-                    this.horizontalAndVerticalSpeeds.X = (int)-1*this.speed;
+                    this.horizontalAndVerticalSpeeds.X = (int)-1 * this.speed;
                     break;
                 case Direction.RIGHT:
                     this.horizontalAndVerticalSpeeds.Y = (float)0;
@@ -156,7 +156,7 @@ namespace PacMan.Entities
                     break;
                 case Direction.UP:
                     this.horizontalAndVerticalSpeeds.X = (float)0;
-                    this.horizontalAndVerticalSpeeds.Y = (float)-1*this.speed;
+                    this.horizontalAndVerticalSpeeds.Y = (float)-1 * this.speed;
                     break;
                 case Direction.DOWN:
                     this.horizontalAndVerticalSpeeds.X = (float)0;
@@ -169,17 +169,17 @@ namespace PacMan.Entities
             }
         }
 
-        protected Rectangle CreateRectForCollision() 
+        protected Rectangle CreateRectForCollision()
         {
             return new Rectangle((int)this.position.X, (int)this.position.Y, this.width, this.height);
         }
 
-        protected void MoveHorizontaly() 
+        protected void MoveHorizontaly()
         {
             this.position.X += (int)this.horizontalAndVerticalSpeeds.X;
         }
 
-        protected void MoveVerticaly() 
+        protected void MoveVerticaly()
         {
             this.position.Y += (int)this.horizontalAndVerticalSpeeds.Y;
         }
@@ -187,11 +187,11 @@ namespace PacMan.Entities
         protected void HorizontalCollision()
         {
             var rectForCollsion = this.CreateRectForCollision();
-            foreach (var rect in this.tilesAround) 
+            foreach (var rect in this.tilesAround)
             {
-                if (rectForCollsion.Intersects(rect)) 
+                if (rectForCollsion.Intersects(rect))
                 {
-                    if ((int)this.horizontalAndVerticalSpeeds.X > 0) 
+                    if ((int)this.horizontalAndVerticalSpeeds.X > 0)
                     {
                         rectForCollsion.X = rect.X - Game1.TileWidth;
 
@@ -203,7 +203,7 @@ namespace PacMan.Entities
                             return;
                         }
                     }
-                    if ((int)this.horizontalAndVerticalSpeeds.X < 0) 
+                    if ((int)this.horizontalAndVerticalSpeeds.X < 0)
                     {
                         rectForCollsion.X = rect.X + Game1.TileWidth;
                         if (this.possibleDirections.Contains(Direction.LEFT))
@@ -229,22 +229,22 @@ namespace PacMan.Entities
                     if ((int)this.horizontalAndVerticalSpeeds.Y > 0)
                     {
                         rectForCollsion.Y = rect.Y - Game1.TileHeight;
-                        if (this.possibleDirections.Contains(Direction.DOWN)) 
+                        if (this.possibleDirections.Contains(Direction.DOWN))
                         {
                             this.direction = this.previousDirection;
                             this.illegalDownCollision = true;
-                           // this.UpdateSpeedVectorBasedOnDirection();
+                            // this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }
                     if ((int)this.horizontalAndVerticalSpeeds.Y < 0)
                     {
-                        rectForCollsion.Y  = rect.Y + Game1.TileHeight;
+                        rectForCollsion.Y = rect.Y + Game1.TileHeight;
                         if (this.possibleDirections.Contains(Direction.UP))
                         {
-                           this.direction = this.previousDirection;
+                            this.direction = this.previousDirection;
                             this.illegalUpCollision = true;
-                           // this.UpdateSpeedVectorBasedOnDirection();
+                            // this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }
@@ -253,28 +253,16 @@ namespace PacMan.Entities
             }
         }
 
-        protected void UpdateRectValue() 
+        protected void UpdateRectValue()
         {
             this.rectangle.X = (int)this.position.X;
             this.rectangle.Y = (int)this.position.Y;
         }
 
-        public void Draw() 
+        public void Draw()
         {
             Game1._spriteBatch.Draw(this.texture, this.rectangle, Color.White);
         }
-        public virtual void Update()
-        {
-            this.UpdateTilesAround();
-            this.UpdateDirection();
-            this.UpdateSpeedVectorBasedOnDirection();
-            this.MoveHorizontaly();
-            this.HorizontalCollision();
-            this.UpdateRectValue();
-
-            this.MoveVerticaly();
-            this.VerticalCollision();
-            this.UpdateRectValue();
-        }
+        public abstract void Update();
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PacMan.PacManGame;
+using System.Diagnostics;
 
 namespace PacMan
 {
@@ -10,7 +11,11 @@ namespace PacMan
         public static GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
 
-        public static string PathToTiles { get; set; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
+        public static string PathToTileImages { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
+        public static string PathToPelletImages { get; } = $"C:\\Users\\hp\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletImages\\";
+        public static string PathToTileArray { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt";
+        public static string PathToPelletArray { get; } = $"C:\\Users\\hp\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletMap.txt";
+        public static string PathToGhostImages { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
         public static int NumOfRows { get; } = 36;
         public static int NumOfCols { get; } = 28;
         public static int TileWidth { get; } = 24;
@@ -19,6 +24,7 @@ namespace PacMan
 
         private int windowWidth = 672;
         private int windowHeight = 864;
+        private float timeElapsed;
 
         private GameBase _game;
 
@@ -35,14 +41,13 @@ namespace PacMan
         protected override void Initialize()
         {
             base.Initialize();
+            this.timeElapsed = 0;
             this._game = new GameBase();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -50,7 +55,8 @@ namespace PacMan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            this._game.UpdateGame();
+            this.timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            this._game.UpdateGame(this.timeElapsed);
 
             base.Update(gameTime);
         }

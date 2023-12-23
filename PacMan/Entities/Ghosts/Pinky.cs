@@ -14,11 +14,7 @@ namespace PacMan.Entities.Ghosts
     {
         public Pinky(int x, int y, int width, int height) : base(x, y, width, height)
         {
-            this.speed = 2;
-            this.movementMode = Modes.CHASE;
-            this.direction = Direction.RIGHT;
-            this.scatterTargetTile = TileMap.GetInstance().Tiles[2, 0];
-            this.path = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
+            this.scatterTargetTile = Map.Map.GetInstance().Tiles[2, 0];
             this.fileName = "pinky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
         }
@@ -34,20 +30,20 @@ namespace PacMan.Entities.Ghosts
             switch (playerDirection) 
             {
                 case Direction.UP:
-                    if (playerTile.j >= 7) 
+                    if (playerTile.j >= 8) 
                     {
                         incrasValue = 4;
                     }
-                    else { incrasValue = 4 - (7 - (playerTile.j + 3)); }
-                    targetTile = TileMap.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j - incrasValue];
+                    else { incrasValue = 4 - (8 - playerTile.j); }
+                    targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j - incrasValue];
                     break;
                 case Direction.DOWN:
-                    if (playerTile.j <= 29)
+                    if (playerTile.j <= 24)
                     {
                         incrasValue = 4;
                     }
-                    else { incrasValue = 4 - ((playerTile.j + 2) - 29); }
-                    targetTile = TileMap.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j + incrasValue];
+                    else { incrasValue = 4 - (playerTile.j - 24); }
+                    targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j + incrasValue];
                     break;
                 case Direction.LEFT:
                     if (playerTile.i >= 5)
@@ -55,18 +51,19 @@ namespace PacMan.Entities.Ghosts
                         incrasValue = 4;
                     }
                     else { incrasValue = 4 - (5 - playerTile.i); }
-                    targetTile = TileMap.GetInstance().Tiles[player.TileLocation.i - incrasValue, player.TileLocation.j];
+                    targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i - incrasValue, player.TileLocation.j];
                     break;
                 case Direction.RIGHT:
-                    if (playerTile.i <= 23)
+                    if (playerTile.i <= 22)
                     {
                         incrasValue = 4;
                     }
-                    else { incrasValue = 4 - (playerTile.i) - 23; }
-                    targetTile = TileMap.GetInstance().Tiles[player.TileLocation.i + incrasValue, player.TileLocation.j];
+                    else { incrasValue = 4 - ((playerTile.i) - 22); }
+                    targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i + incrasValue, player.TileLocation.j];
                     break;
             }
             this.ChangeDirectionBasedOnTarget(targetTile);
         }
     }
 }
+

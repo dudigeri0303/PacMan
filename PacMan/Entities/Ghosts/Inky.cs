@@ -1,0 +1,78 @@
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using PacMan.Map;
+using PacMan.PacManGame;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PacMan.Entities.Ghosts
+{
+    public class Inky : GhostBase
+    {
+        public Inky(int x, int y, int width, int height) : base(x, y, width, height)
+        {
+            this.scatterTargetTile = Map.Map.GetInstance().Tiles[27, 31];
+            this.fileName = "inky_test.png";
+            this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
+        }
+
+        protected override void Chase(Player.Player player)
+        {
+            Tile playerTile = player.TileLocation;
+            Direction playerDirection = player.Direction;
+            int incrasValue = 0;
+
+            switch (playerDirection)
+            {
+                case Direction.UP:
+                    if (playerTile.j >= 6)
+                    {
+                        incrasValue = 2;
+                    }
+                    else { incrasValue = 2 - (6 - playerTile.j); }
+                    playerTile = Map.Map.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j - incrasValue];
+                    break;
+                case Direction.DOWN:
+                    if (playerTile.j <= 26)
+                    {
+                        incrasValue = 2;
+                    }
+                    else { incrasValue = 2 - (playerTile.j - 26); }
+                    playerTile = Map.Map.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j + incrasValue];
+                    break;
+                case Direction.LEFT:
+                    if (playerTile.i >= 3)
+                    {
+                        incrasValue = 2;
+                    }
+                    else { incrasValue = 2 - (3 - playerTile.i); }
+                    playerTile = Map.Map.GetInstance().Tiles[player.TileLocation.i - incrasValue, player.TileLocation.j];
+                    break;
+                case Direction.RIGHT:
+                    if (playerTile.i <= 24)
+                    {
+                        incrasValue = 2;
+                    }
+                    else { incrasValue = 2 - ((playerTile.i) - 24); }
+                    playerTile = Map.Map.GetInstance().Tiles[player.TileLocation.i + incrasValue, player.TileLocation.j];
+                    break;
+            }
+
+            int targetTileI = blinky.TileLocation.i + 2 * (playerTile.i - blinky.TileLocation.i);
+            int targetTileJ = blinky.TileLocation.j + 2 * (playerTile.j - blinky.TileLocation.j);
+
+            if (targetTileI <= 0) { targetTileI = 1; }
+            else if (targetTileI >= 27) { targetTileI = 26; }
+            if (targetTileJ <= 3) { targetTileJ = 4; }
+            else if (targetTileJ >= 29) { targetTileJ = 28; }
+
+            Tile targetTile = Map.Map.GetInstance().Tiles[targetTileI, targetTileJ];
+
+            this.ChangeDirectionBasedOnTarget(targetTile);
+
+        }
+    }
+}
