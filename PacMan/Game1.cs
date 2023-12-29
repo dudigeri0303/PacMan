@@ -11,16 +11,17 @@ namespace PacMan
         public static GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
 
-        public static string PathToTileImages { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
-        public static string PathToPelletImages { get; } = $"C:\\Users\\hp\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletImages\\";
-        public static string PathToTileArray { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt";
-        public static string PathToPelletArray { get; } = $"C:\\Users\\hp\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletMap.txt";
-        public static string PathToGhostImages { get; } = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
+        public static string PathToTileImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
+        public static string PathToPelletImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletImages\\";
+        public static string PathToTileArray { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt";
+        public static string PathToPelletArray { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletMap.txt";
+        public static string PathToGhostImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
+        public static string PathToPlayerImages { get; } = "C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\EntityAssets\\PlayerAssets\\";
         public static int NumOfRows { get; } = 36;
         public static int NumOfCols { get; } = 28;
         public static int TileWidth { get; } = 24;
         public static int TileHeight { get; } = 24;
-        public static int NumOfTiles { get; } = 26;
+        public static int NumOfTiles { get; } = 27;
 
         private int windowWidth = 672;
         private int windowHeight = 864;

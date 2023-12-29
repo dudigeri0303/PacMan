@@ -12,11 +12,15 @@ namespace PacMan.Entities.Ghosts
 {
     public class Inky : GhostBase
     {
-        public Inky(int x, int y, int width, int height) : base(x, y, width, height)
+        private Blinky blinky;
+        public Blinky Blinky { set { blinky = value; } }
+        public Inky(int x, int y, int width, int height, Blinky blinky) : base(x, y, width, height)
         {
+            this.movementMode = Modes.IDLEINHOUSE;
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[27, 31];
             this.fileName = "inky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
+            this.blinky = blinky;
         }
 
         protected override void Chase(Player.Player player)
@@ -61,8 +65,8 @@ namespace PacMan.Entities.Ghosts
                     break;
             }
 
-            int targetTileI = blinky.TileLocation.i + 2 * (playerTile.i - blinky.TileLocation.i);
-            int targetTileJ = blinky.TileLocation.j + 2 * (playerTile.j - blinky.TileLocation.j);
+            int targetTileI = this.blinky.TileLocation.i + 2 * (playerTile.i - this.blinky.TileLocation.i);
+            int targetTileJ = this.blinky.TileLocation.j + 2 * (playerTile.j - this.blinky.TileLocation.j);
 
             if (targetTileI <= 0) { targetTileI = 1; }
             else if (targetTileI >= 27) { targetTileI = 26; }

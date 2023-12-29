@@ -14,20 +14,13 @@ namespace PacMan.PacManGame
     public class GameBase
     {
         private Player player;
-        private List<GhostBase> ghosts;
+        private GhostManager ghostManager;
         private KeyInputHandler keyInputHandler;
 
         public GameBase() 
         {
             this.player = new Player(96, 96, 24, 24, Map.Map.GetInstance().Pellets);
-            this.ghosts = new List<GhostBase>()
-            {
-                new Blinky(312, 336, 24, 24),
-                new Pinky(264, 672, 24, 24),
-                new Inky(120, 96, 24, 24),
-                new Clyde(576, 96, 24, 24)
-            };
-            this.ghosts[2].Blinky = this.ghosts[0];
+            this.ghostManager = new GhostManager();
             this.keyInputHandler = new KeyInputHandler();
         }
 
@@ -35,21 +28,15 @@ namespace PacMan.PacManGame
         {
             this.keyInputHandler.HandleKey(this.player);
             this.player.Update();
+            this.ghostManager.Update(this.player, seconds);
 
-            foreach(var ghost in this.ghosts) 
-            {
-                ghost.UpdateGhost(this.player, seconds);
-            }
+            
         }
         public void DrawGame() 
         {
             Map.Map.GetInstance().DrawTileMap();
             this.player.Draw();
-
-            foreach (var ghost in this.ghosts)
-            {
-                ghost.Draw();
-            }
+            this.ghostManager.Draw();
         }
     }
 }

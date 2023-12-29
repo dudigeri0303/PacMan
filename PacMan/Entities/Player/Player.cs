@@ -14,7 +14,7 @@ namespace PacMan.Entities.Player
         private List<Pellet> pelletsAround;
         public Player(int x, int y, int width, int height, Pellet[,] pelletArray) : base(x, y, width, height)
         {
-            this.path = $"C:\\Users\\hp\\Source\\Repos\\PacMan\\PacMan\\Assets\\EntityAssets\\PlayerAssets\\";
+            this.path = Game1.PathToPlayerImages;
             this.fileName = "pacman_dummy24.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
             this.points = 0;

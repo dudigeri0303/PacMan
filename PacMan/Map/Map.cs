@@ -28,6 +28,15 @@ namespace PacMan.Map
         private List<Tuple<int, int>> intersections;
         public List<Tuple<int, int>> Intersections { get { return intersections; } }
 
+        private List<Tuple<int, int>> houseTiles;
+        public List<Tuple<int, int>> HouseTiles { get { return houseTiles; } }
+       
+        private List<Tuple<int, int>> doorTiles;
+        public List<Tuple<int, int>> DoorTiles { get { return doorTiles; } }
+
+        private bool doorOpen;
+        public bool DoorOpen { get { return doorOpen; } }
+
         private Map()
         {
             this.tiles = new Tile[Game1.NumOfCols, Game1.NumOfRows];
@@ -45,6 +54,21 @@ namespace PacMan.Map
                 Tuple.Create(1, 29), Tuple.Create(3, 29), Tuple.Create(6, 29), Tuple.Create(9, 29), Tuple.Create(12, 29), Tuple.Create(15, 29), Tuple.Create(18, 29), Tuple.Create(21, 29), Tuple.Create(24, 29), Tuple.Create(26, 29),
                 Tuple.Create(1, 32), Tuple.Create(12, 32), Tuple.Create(15, 32), Tuple.Create(26, 32)
             };
+            
+            this.houseTiles = new List<Tuple<int, int>>()
+            {
+                Tuple.Create(11, 16), Tuple.Create(12, 16), Tuple.Create(13, 16), Tuple.Create(14, 16), Tuple.Create(15, 16), Tuple.Create(16, 16),
+                Tuple.Create(11, 17), Tuple.Create(12, 17), Tuple.Create(13, 17), Tuple.Create(14, 17), Tuple.Create(15, 17), Tuple.Create(16, 17),
+                Tuple.Create(11, 18), Tuple.Create(12, 18), Tuple.Create(13, 18), Tuple.Create(14, 18), Tuple.Create(15, 18), Tuple.Create(16, 18)
+            };
+
+            this.doorTiles = new List<Tuple<int, int>>()
+            {
+                Tuple.Create(14, 15), Tuple.Create(15, 15)
+            };
+
+            this.doorOpen = false;
+            
             DeserializeAndFillTiles(Game1.PathToTileArray);
             DeserializeAndFillPellets(Game1.PathToPelletArray);
         }

@@ -14,6 +14,7 @@ namespace PacMan.Entities.Ghosts
     {
         public Pinky(int x, int y, int width, int height) : base(x, y, width, height)
         {
+            this.movementMode = Modes.IDLEINHOUSE;
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[2, 0];
             this.fileName = "pinky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);

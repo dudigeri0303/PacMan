@@ -17,19 +17,24 @@ namespace PacMan.Entities.Ghosts
         protected bool canChangeDirection;
         protected Random random;
 
-        //Only for inky, couse he needs blinky to calc the target tile
-        protected GhostBase blinky;
-        public GhostBase Blinky { set { blinky = value; } }
-        
         public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
         {
             this.speed = 2;
-            this.movementMode = Modes.SCATTER;
             this.direction = Direction.RIGHT;
             this.path = Game1.PathToGhostImages;
             this.canChangeDirection = true;
             this.random = new Random();
         }
+        protected void IdleInHouse() 
+        {
+            this.direction = Direction.DOWN;
+        }
+
+        protected void Start() 
+        {
+        
+        }
+
         protected abstract void Chase(Player.Player player);
         protected void Scatter() 
         {
@@ -53,6 +58,12 @@ namespace PacMan.Entities.Ghosts
         {
             switch (this.movementMode) 
             {
+                case Modes.IDLEINHOUSE:
+                    this.IdleInHouse(); 
+                    break;
+                case Modes.START:
+                    this.Start(); 
+                    break;
                 case Modes.CHASE:
                     this.Chase(player);
                     break;
@@ -63,14 +74,6 @@ namespace PacMan.Entities.Ghosts
                     this.Frightened();
                     break;
             }
-        }
-
-        private void ChangeMode(float seconds) 
-        {
-            Debug.WriteLine(seconds.ToString());
-            if((int)Math.Floor(seconds) % 20 == 0) { this.movementMode = Modes.SCATTER; }
-            else if((int)Math.Floor(seconds) % 7 == 0) { this.movementMode = Modes.CHASE; }
-            
         }
 
         protected double CalcGreedyValue(Tile tile, Tile targetTile)
@@ -88,7 +91,8 @@ namespace PacMan.Entities.Ghosts
 
         protected void ChangeDirectionBasedOnTarget(Tile targetTile) 
         {
-            if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
+                | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.canChangeDirection == true)
                 {
@@ -143,7 +147,6 @@ namespace PacMan.Entities.Ghosts
         public void UpdateGhost(Player.Player player, float seconds)
         {
             this.UpdateTilesAround();
-            this.ChangeMode(seconds);
             this.ExecuteMovementBasedOnMode(player);
             this.Update();
         }
