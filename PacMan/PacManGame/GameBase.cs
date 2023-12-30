@@ -19,8 +19,8 @@ namespace PacMan.PacManGame
 
         public GameBase() 
         {
-            this.player = new Player(96, 96, 24, 24, Map.Map.GetInstance().Pellets);
             this.ghostManager = new GhostManager();
+            this.player = new Player(96, 96, 24, 24, Map.Map.GetInstance().Pellets, this.ghostManager);
             this.keyInputHandler = new KeyInputHandler();
         }
 
@@ -29,8 +29,6 @@ namespace PacMan.PacManGame
             this.keyInputHandler.HandleKey(this.player);
             this.player.Update();
             this.ghostManager.Update(this.player, seconds);
-
-            
         }
         public void DrawGame() 
         {

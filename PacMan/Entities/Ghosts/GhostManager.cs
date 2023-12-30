@@ -15,6 +15,7 @@ namespace PacMan.Entities.Ghosts
         private Pinky pinky;
         private Clyde clyde;
         private List<GhostBase> ghosts;
+        public List<GhostBase> Ghosts { get { return ghosts; } }
 
         private float timeElapsed;
 
@@ -48,8 +49,6 @@ namespace PacMan.Entities.Ghosts
                     this.pinky.MovementMode = Modes.START;
                 }
             }
-            
-
         }
 
         private void ManageInky(Player.Player player)
@@ -94,10 +93,18 @@ namespace PacMan.Entities.Ghosts
             this.ManagePinky();
             this.ManageInky(player);
             this.ManageClyde(player);
-
-            
         }
 
+        public void MakeGhostsFrightened() 
+        {
+            foreach (var ghost in this.ghosts) 
+            {
+                if (ghost.MovementMode != Modes.START & ghost.MovementMode != Modes.IDLEINHOUSE) 
+                {
+                    ghost.MovementMode = Modes.FRIGHTENED;
+                }
+            }
+        }
 
         public void Update(Player.Player player, float seconds)
         {

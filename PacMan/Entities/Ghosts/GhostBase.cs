@@ -13,6 +13,7 @@ namespace PacMan.Entities.Ghosts
     public abstract class GhostBase : EntityBase
     {
         protected Modes movementMode;
+        public Rectangle Rectangle { get { return rectangle; } }
         public Modes MovementMode 
         {
             get { return movementMode; }
@@ -42,7 +43,9 @@ namespace PacMan.Entities.Ghosts
 
         protected float timeElapsed;
         public float TimeElapsed {  set { timeElapsed += value; } }
-
+        
+        protected float frightenedTImeElapsed;
+        protected bool frightenedTimerRunning;
         public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
         {
             this.path = Game1.PathToGhostImages;
@@ -50,7 +53,11 @@ namespace PacMan.Entities.Ghosts
             this.speed = 2;
 
             this.canChangeDirection = true;
+            
             this.allowDoor = true;
+
+            this.frightenedTimerRunning = false;
+            this.frightenedTImeElapsed = 0;
 
             this.startTargetTile = Map.Map.GetInstance().Tiles[12, 14];
             
@@ -83,7 +90,6 @@ namespace PacMan.Entities.Ghosts
             }
         }
 
-
         protected void IdleInHouse() 
         {
             this.nextDirection = Direction.NONE;
@@ -100,21 +106,59 @@ namespace PacMan.Entities.Ghosts
         {
             this.ChangeDirectionBasedOnTarget(this.scatterTargetTile);
         }
-        protected void Frightened()
+        protected void Frightened(float seconds)
         {
-            if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            if (!this.frightenedTimerRunning)
             {
-                if (this.canChangeDirection == true)
-                {
-                    this.canChangeDirection = false;
-                    this.RemoveReverseDirection();
-                    var randIndex = this.random.Next(0, this.possibleDirections.Count);
-                    this.nextDirection = this.possibleDirections[randIndex];
-                }
+                this.frightenedTimerRunning = true;
+                this.timerRunning = false;
             }
-            else if (!this.canChangeDirection) { this.canChangeDirection = true; }
+            else 
+            {
+                this.frightenedTImeElapsed += seconds;
+            }
+
+            if (this.frightenedTimerRunning & (int)Math.Floor(this.frightenedTImeElapsed) != 10)
+            {
+                if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                {
+                    if (this.canChangeDirection == true)
+                    {
+                        this.canChangeDirection = false;
+                        this.RemoveReverseDirection();
+                        var randIndex = this.random.Next(0, this.possibleDirections.Count);
+                        this.nextDirection = this.possibleDirections[randIndex];
+                    }
+                }
+                else if (!this.canChangeDirection) { this.canChangeDirection = true; }
+            }
+            else if (this.frightenedTimerRunning & (int)Math.Floor(this.frightenedTImeElapsed) == 10) 
+            {
+                this.frightenedTImeElapsed = 0;
+                this.frightenedTimerRunning = false;
+                this.timerRunning = true;
+                this.MovementMode = Modes.SCATTER;
+            }
         }
-        private void ExecuteMovementBasedOnMode(Player.Player player) 
+
+        protected void RunBackToHouse() 
+        {
+            if (!Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            {
+                if (this.speed != 5) 
+                {
+                    this.speed = 5;
+                }
+                this.ChangeDirectionBasedOnTarget(this.startTargetTile); ;
+            }
+            else 
+            {
+                this.speed = 2;
+                this.movementMode = Modes.START;
+            }
+        }
+
+        private void ExecuteMovementBasedOnMode(Player.Player player, float seconds) 
         {
             switch (this.movementMode) 
             {
@@ -131,7 +175,10 @@ namespace PacMan.Entities.Ghosts
                     this.Scatter();
                     break;
                 case Modes.FRIGHTENED:
-                    this.Frightened();
+                    this.Frightened(seconds);
+                    break;
+                case Modes.RUNBACKTOHOUSE:
+                    this.RunBackToHouse();
                     break;
             }
         }
@@ -196,7 +243,6 @@ namespace PacMan.Entities.Ghosts
             if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & this.movementMode != Modes.CHASE) 
             { 
                 this.movementMode = Modes.CHASE;
-                Debug.WriteLine("Chase");
                 if ((int)Math.Floor(this.timeElapsed) == 84) 
                 {
                     this.timerRunning = false;
@@ -205,7 +251,6 @@ namespace PacMan.Entities.Ghosts
             else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & this.movementMode != Modes.SCATTER) 
             { 
                 this.movementMode = Modes.SCATTER;
-                Debug.WriteLine("Scatter");
             }
         }
 
@@ -225,9 +270,18 @@ namespace PacMan.Entities.Ghosts
 
         public void UpdateGhost(Player.Player player, float seconds)
         {
-            this.UpdateTilesAround();
-            this.ExecuteMovementBasedOnMode(player);
-            this.Update();
+            if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
+            {
+                this.ResetTeleportedValue();
+                this.UpdateTilesAround();
+                this.ExecuteMovementBasedOnMode(player, seconds);
+                this.Update();
+            }
+            else 
+            {
+                this.UpdateWhenOutOfBounds();
+            }
+            
         }
     }
 }

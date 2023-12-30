@@ -71,8 +71,6 @@ namespace PacMan.Map
             {
                 Tuple.Create(13, 14), Tuple.Create(14, 14)
             };
-
-            this.doorOpen = false;
             
             DeserializeAndFillTiles(Game1.PathToTileArray);
             DeserializeAndFillPellets(Game1.PathToPelletArray);

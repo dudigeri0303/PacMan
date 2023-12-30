@@ -48,6 +48,8 @@ namespace PacMan.Entities
         protected Tile tileLocation;
         public Tile TileLocation { get { return tileLocation; } }
 
+        protected bool teleported;
+
         public EntityBase(int x, int y, int width, int height)
         {
             this.width = width;
@@ -80,6 +82,8 @@ namespace PacMan.Entities
             this.illegalUpCollision = false;
             this.illegalLeftCollision = false;
             this.illegalRightCollision = false;
+            this.teleported = false;
+        
         }
 
         protected void FillPossibleDirections()
@@ -258,6 +262,34 @@ namespace PacMan.Entities
             this.rectangle.X = (int)this.position.X;
             this.rectangle.Y = (int)this.position.Y;
         }
+
+        protected void ResetTeleportedValue() 
+        {
+            if (this.teleported) 
+            {
+                this.teleported = false;
+            }
+        }
+
+        protected void UpdateWhenOutOfBounds() 
+        {
+           // this.UpdateSpeedVectorBasedOnDirection();
+            this.MoveHorizontaly();
+            this.UpdateRectValue();
+
+            if (this.rectangle.X <= -24 & !this.teleported)
+            {
+                this.teleported = true;
+                this.position.X = 696;
+                this.UpdateRectValue();
+            }
+            else if (this.rectangle.X > 672 & !this.teleported)
+            {
+                this.teleported = true;
+                this.position.X = 0 - this.width;
+                this.UpdateRectValue();
+            }
+        } 
 
         public void Draw()
         {
