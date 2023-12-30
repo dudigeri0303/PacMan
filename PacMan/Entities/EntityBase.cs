@@ -25,7 +25,7 @@ namespace PacMan.Entities
         protected int speed;
         protected Vector2 horizontalAndVerticalSpeeds;
 
-        protected List<Rectangle> tilesAround;
+        protected List<Tile> tilesAround;
         protected List<Tuple<int, int>> tileOffsetsAround;
 
         protected Direction direction;
@@ -39,10 +39,12 @@ namespace PacMan.Entities
             get { return nextDirection; }
             set { nextDirection = value; }
         }
+       
         protected Direction previousDirection;
         protected List<Direction> possibleDirections;
         public List<Direction> PossibleDirections { get { return possibleDirections; } }
         protected bool illegalUpCollision, illegalDownCollision, illegalLeftCollision, illegalRightCollision;
+        
         protected Tile tileLocation;
         public Tile TileLocation { get { return tileLocation; } }
 
@@ -55,8 +57,9 @@ namespace PacMan.Entities
             this.position = new Vector2((float)x, (float)y);
             this.rectangle = new Rectangle((int)this.position.X, (int)this.position.Y, width, height);
 
+            this.horizontalAndVerticalSpeeds = new Vector2((float)0, (float)0);
 
-            this.tilesAround = new List<Rectangle>();
+            this.tilesAround = new List<Tile>();
             this.tileOffsetsAround = new List<Tuple<int, int>>()
             {
                 Tuple.Create(0, 0),
@@ -70,7 +73,7 @@ namespace PacMan.Entities
                 Tuple.Create(-1, 1)
             };
 
-            this.direction = Direction.RIGHT;
+            this.direction = Direction.NONE;
             this.possibleDirections = new List<Direction>();
 
             this.illegalDownCollision = false;
@@ -82,17 +85,19 @@ namespace PacMan.Entities
         protected void FillPossibleDirections()
         {
             this.possibleDirections.Clear();
+            
             if (!this.illegalLeftCollision) { this.possibleDirections.Add(Direction.LEFT); }
             if (!this.illegalRightCollision) { this.possibleDirections.Add(Direction.RIGHT); }
             if (!this.illegalUpCollision) { this.possibleDirections.Add(Direction.UP); }
             if (!this.illegalDownCollision) { this.possibleDirections.Add(Direction.DOWN); }
+            
             this.illegalDownCollision = false;
             this.illegalLeftCollision = false;
             this.illegalRightCollision = false;
             this.illegalUpCollision = false;
         }
 
-        protected void UpdateTilesAround()
+        protected virtual void UpdateTilesAround()
         {
             this.FillPossibleDirections();
             this.tilesAround.Clear();
@@ -106,13 +111,12 @@ namespace PacMan.Entities
             var tileLocation = Tuple.Create(i, j);
             this.tileLocation = Map.Map.GetInstance().Tiles[tileLocation.Item1, tileLocation.Item2];
 
-
             foreach (var tile in this.tileOffsetsAround)
             {
                 var tileIndex = Tuple.Create(tileLocation.Item1 + tile.Item1, tileLocation.Item2 + tile.Item2);
                 if (Map.Map.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Name.ElementAt(4).ToString() != "0")
                 {
-                    this.tilesAround.Add(Map.Map.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2].Rect);
+                    this.tilesAround.Add(Map.Map.GetInstance().Tiles[tileIndex.Item1, tileIndex.Item2]);
                     if (tile.Item1 == 1 & tile.Item2 == 0 & this.possibleDirections.Contains(Direction.RIGHT))
                     {
                         this.possibleDirections.Remove(Direction.RIGHT);
@@ -147,12 +151,12 @@ namespace PacMan.Entities
             switch (this.direction)
             {
                 case Direction.LEFT:
-                    this.horizontalAndVerticalSpeeds.Y = (float)0;
                     this.horizontalAndVerticalSpeeds.X = (int)-1 * this.speed;
+                    this.horizontalAndVerticalSpeeds.Y = (float)0;
                     break;
                 case Direction.RIGHT:
-                    this.horizontalAndVerticalSpeeds.Y = (float)0;
                     this.horizontalAndVerticalSpeeds.X = (float)this.speed;
+                    this.horizontalAndVerticalSpeeds.Y = (float)0;
                     break;
                 case Direction.UP:
                     this.horizontalAndVerticalSpeeds.X = (float)0;
@@ -187,30 +191,28 @@ namespace PacMan.Entities
         protected void HorizontalCollision()
         {
             var rectForCollsion = this.CreateRectForCollision();
-            foreach (var rect in this.tilesAround)
+            foreach (var tile in this.tilesAround)
             {
-                if (rectForCollsion.Intersects(rect))
+                if (rectForCollsion.Intersects(tile.Rect))
                 {
                     if ((int)this.horizontalAndVerticalSpeeds.X > 0)
                     {
-                        rectForCollsion.X = rect.X - Game1.TileWidth;
+                        rectForCollsion.X = tile.Rect.X - Game1.TileWidth;
 
                         if (this.possibleDirections.Contains(Direction.RIGHT))
                         {
                             this.direction = this.previousDirection;
                             this.illegalRightCollision = true;
-                            //this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }
-                    if ((int)this.horizontalAndVerticalSpeeds.X < 0)
+                    else if ((int)this.horizontalAndVerticalSpeeds.X < 0)
                     {
-                        rectForCollsion.X = rect.X + Game1.TileWidth;
+                        rectForCollsion.X = tile.Rect.X + Game1.TileWidth;
                         if (this.possibleDirections.Contains(Direction.LEFT))
                         {
                             this.direction = this.previousDirection;
                             this.illegalLeftCollision = true;
-                            //this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }
@@ -222,29 +224,27 @@ namespace PacMan.Entities
         protected void VerticalCollision()
         {
             var rectForCollsion = this.CreateRectForCollision();
-            foreach (var rect in this.tilesAround)
+            foreach (var tile in this.tilesAround)
             {
-                if (rectForCollsion.Intersects(rect))
+                if (rectForCollsion.Intersects(tile.Rect))
                 {
                     if ((int)this.horizontalAndVerticalSpeeds.Y > 0)
                     {
-                        rectForCollsion.Y = rect.Y - Game1.TileHeight;
+                        rectForCollsion.Y = tile.Rect.Y - Game1.TileHeight;
                         if (this.possibleDirections.Contains(Direction.DOWN))
                         {
                             this.direction = this.previousDirection;
                             this.illegalDownCollision = true;
-                            // this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }
-                    if ((int)this.horizontalAndVerticalSpeeds.Y < 0)
+                    else if ((int)this.horizontalAndVerticalSpeeds.Y < 0)
                     {
-                        rectForCollsion.Y = rect.Y + Game1.TileHeight;
+                        rectForCollsion.Y = tile.Rect.Y + Game1.TileHeight;
                         if (this.possibleDirections.Contains(Direction.UP))
                         {
                             this.direction = this.previousDirection;
                             this.illegalUpCollision = true;
-                            // this.UpdateSpeedVectorBasedOnDirection();
                             return;
                         }
                     }

@@ -34,8 +34,8 @@ namespace PacMan.Map
         private List<Tuple<int, int>> doorTiles;
         public List<Tuple<int, int>> DoorTiles { get { return doorTiles; } }
 
-        private bool doorOpen;
-        public bool DoorOpen { get { return doorOpen; } }
+        private List<Tuple<int, int>> ghostStartIntersections;
+        public List<Tuple<int, int>> GhostStartIntersections { get { return ghostStartIntersections; } }
 
         private Map()
         {
@@ -64,7 +64,12 @@ namespace PacMan.Map
 
             this.doorTiles = new List<Tuple<int, int>>()
             {
-                Tuple.Create(14, 15), Tuple.Create(15, 15)
+                Tuple.Create(13, 15), Tuple.Create(14, 15)
+            };
+
+            this.ghostStartIntersections = new List<Tuple<int, int>>()
+            {
+                Tuple.Create(13, 14), Tuple.Create(14, 14)
             };
 
             this.doorOpen = false;
@@ -99,7 +104,11 @@ namespace PacMan.Map
                     {
                         this.pellets[i, j] = new Pellet(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"pellet_test.png", i, j, Game1.PathToPelletImages);
                     }
-                    else 
+                    else if (deserialzedArray[i, j] == 26) 
+                    {
+                        this.pellets[i, j] = new Pellet(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"pelletBooster_test.png", i, j, Game1.PathToPelletImages);
+                    }
+                    else
                     {
                         this.pellets[i, j] = new Pellet(i * Game1.TileWidth, j * Game1.TileHeight, Game1.TileWidth, Game1.TileHeight, $"empty_pellet.png", i, j, Game1.PathToPelletImages);
                     }

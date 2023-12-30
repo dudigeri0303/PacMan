@@ -16,6 +16,7 @@ namespace PacMan.Entities.Ghosts
         public Blinky Blinky { set { blinky = value; } }
         public Inky(int x, int y, int width, int height, Blinky blinky) : base(x, y, width, height)
         {
+            this.timerRunning = false;
             this.movementMode = Modes.IDLEINHOUSE;
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[27, 31];
             this.fileName = "inky_test.png";
@@ -76,7 +77,6 @@ namespace PacMan.Entities.Ghosts
             Tile targetTile = Map.Map.GetInstance().Tiles[targetTileI, targetTileJ];
 
             this.ChangeDirectionBasedOnTarget(targetTile);
-
         }
     }
 }

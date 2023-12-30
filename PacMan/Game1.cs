@@ -25,7 +25,6 @@ namespace PacMan
 
         private int windowWidth = 672;
         private int windowHeight = 864;
-        private float timeElapsed;
 
         private GameBase _game;
 
@@ -42,7 +41,6 @@ namespace PacMan
         protected override void Initialize()
         {
             base.Initialize();
-            this.timeElapsed = 0;
             this._game = new GameBase();
         }
 
@@ -56,8 +54,7 @@ namespace PacMan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            this.timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            this._game.UpdateGame(this.timeElapsed);
+            this._game.UpdateGame((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Update(gameTime);
         }

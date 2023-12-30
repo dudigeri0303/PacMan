@@ -11,6 +11,7 @@ namespace PacMan.Entities.Ghosts
     {
         public Clyde(int x, int y, int width, int height) : base(x, y, width, height)
         {
+            this.timerRunning = false;
             this.movementMode = Modes.IDLEINHOUSE;
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[0, 31];
             this.fileName = "clyde_test.png";

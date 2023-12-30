@@ -13,25 +13,85 @@ namespace PacMan.Entities.Ghosts
     public abstract class GhostBase : EntityBase
     {
         protected Modes movementMode;
+        public Modes MovementMode 
+        {
+            get { return movementMode; }
+            set {  movementMode = value; } 
+        }
+
         protected Tile scatterTargetTile;
+        protected Tile startTargetTile;
+        public Tile StartTargetTile { get { return startTargetTile; } }
+        
         protected bool canChangeDirection;
+        protected bool allowDoor;
+        public bool AllowDoor 
+        { 
+            get { return allowDoor; } 
+            set { allowDoor = value; }
+        }
+        
         protected Random random;
+
+        protected bool timerRunning;
+        public bool TimerRunning
+        {
+            get { return timerRunning; }
+            set { timerRunning = value; }
+        }
+
+        protected float timeElapsed;
+        public float TimeElapsed {  set { timeElapsed += value; } }
 
         public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
         {
-            this.speed = 2;
-            this.direction = Direction.RIGHT;
             this.path = Game1.PathToGhostImages;
+
+            this.speed = 2;
+
             this.canChangeDirection = true;
+            this.allowDoor = true;
+
+            this.startTargetTile = Map.Map.GetInstance().Tiles[12, 14];
+            
             this.random = new Random();
         }
+
+        protected override void UpdateTilesAround()
+        {
+            base.UpdateTilesAround();
+            
+            if(this.allowDoor) 
+            {
+                List<Tile> tempList = new List<Tile>();
+
+                foreach (Tile tile in this.tilesAround) 
+                {
+                    Tuple<int, int> tileLocation = Tuple.Create(tile.i, tile.j);
+                    
+                    if (Map.Map.GetInstance().DoorTiles.Contains(tileLocation)) 
+                    {
+                        if(tileLocation.Item2 > this.tileLocation.j) 
+                        {
+                            this.possibleDirections.Add(Direction.DOWN);
+                        }
+                        else { this.possibleDirections.Add(Direction.UP); }
+                    }
+                    else {tempList.Add(tile); }
+                }
+                this.tilesAround = tempList;
+            }
+        }
+
+
         protected void IdleInHouse() 
         {
-            this.direction = Direction.DOWN;
+            this.nextDirection = Direction.NONE;
         }
 
         protected void Start() 
         {
+            this.ChangeDirectionBasedOnTarget(this.startTargetTile);
         
         }
 
@@ -92,7 +152,8 @@ namespace PacMan.Entities.Ghosts
         protected void ChangeDirectionBasedOnTarget(Tile targetTile) 
         {
             if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
-                | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
+                | Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.canChangeDirection == true)
                 {
@@ -128,6 +189,24 @@ namespace PacMan.Entities.Ghosts
                 }
             }
             else if(!this.canChangeDirection) { this.canChangeDirection = true; }
+        }
+
+        public void ChangeModeBasedOnTime() 
+        {
+            if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & this.movementMode != Modes.CHASE) 
+            { 
+                this.movementMode = Modes.CHASE;
+                Debug.WriteLine("Chase");
+                if ((int)Math.Floor(this.timeElapsed) == 84) 
+                {
+                    this.timerRunning = false;
+                }
+            }
+            else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & this.movementMode != Modes.SCATTER) 
+            { 
+                this.movementMode = Modes.SCATTER;
+                Debug.WriteLine("Scatter");
+            }
         }
 
         public override void Update()

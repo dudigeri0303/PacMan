@@ -11,6 +11,8 @@ namespace PacMan.Entities.Player
     public class Player : EntityBase
     {
         private int points;
+        public int Points { get { return points; } }
+
         private List<Pellet> pelletsAround;
         public Player(int x, int y, int width, int height, Pellet[,] pelletArray) : base(x, y, width, height)
         {
