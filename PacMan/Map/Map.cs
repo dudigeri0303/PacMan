@@ -41,6 +41,7 @@ namespace PacMan.Map
         {
             this.tiles = new Tile[Game1.NumOfCols, Game1.NumOfRows];
             this.pellets = new Pellet[Game1.NumOfCols, Game1.NumOfRows];
+
             this.intersections = new List<Tuple<int, int>>() 
             {
                 Tuple.Create(1, 4), Tuple.Create(6, 4), Tuple.Create(12, 4), Tuple.Create(15, 4), Tuple.Create(21, 4),  Tuple.Create(26, 4), 

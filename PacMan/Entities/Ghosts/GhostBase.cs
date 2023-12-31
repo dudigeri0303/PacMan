@@ -23,7 +23,9 @@ namespace PacMan.Entities.Ghosts
         protected Tile scatterTargetTile;
         protected Tile startTargetTile;
         public Tile StartTargetTile { get { return startTargetTile; } }
-        
+        protected Tile houseTargetTile;
+        public Tile HouseTargetTile{ get { return houseTargetTile; } }
+
         protected bool canChangeDirection;
         protected bool allowDoor;
         public bool AllowDoor 
@@ -64,6 +66,7 @@ namespace PacMan.Entities.Ghosts
             this.random = new Random();
         }
 
+        //TODO visszameneskor legyen nyitva az ajto
         protected override void UpdateTilesAround()
         {
             base.UpdateTilesAround();
@@ -75,16 +78,25 @@ namespace PacMan.Entities.Ghosts
                 foreach (Tile tile in this.tilesAround) 
                 {
                     Tuple<int, int> tileLocation = Tuple.Create(tile.i, tile.j);
-                    
-                    if (Map.Map.GetInstance().DoorTiles.Contains(tileLocation)) 
+
+                    if (!Map.Map.GetInstance().DoorTiles.Contains(tileLocation))
                     {
-                        if(tileLocation.Item2 > this.tileLocation.j) 
+                        tempList.Add(tile);
+                    }
+                    else if (Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
+                            | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                    {
+                        if (this.movementMode == Modes.START)
+                        {
+                            this.possibleDirections.Add(Direction.UP);
+                        }
+                        else if (this.movementMode == Modes.RUNBACKTOHOUSE) 
                         {
                             this.possibleDirections.Add(Direction.DOWN);
                         }
-                        else { this.possibleDirections.Add(Direction.UP); }
+                    
+                    
                     }
-                    else {tempList.Add(tile); }
                 }
                 this.tilesAround = tempList;
             }
@@ -116,6 +128,7 @@ namespace PacMan.Entities.Ghosts
             else 
             {
                 this.frightenedTImeElapsed += seconds;
+                
             }
 
             if (this.frightenedTimerRunning & (int)Math.Floor(this.frightenedTImeElapsed) != 10)
@@ -143,16 +156,18 @@ namespace PacMan.Entities.Ghosts
 
         protected void RunBackToHouse() 
         {
-            if (!Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+            if (this.tileLocation != this.houseTargetTile)
             {
-                if (this.speed != 5) 
+                if (this.speed != 4) 
                 {
-                    this.speed = 5;
+                    this.speed = 4;
+                    this.allowDoor = true;
                 }
-                this.ChangeDirectionBasedOnTarget(this.startTargetTile); ;
+                this.ChangeDirectionBasedOnTarget(this.houseTargetTile); ;
             }
             else 
             {
+                this.allowDoor = false;
                 this.speed = 2;
                 this.movementMode = Modes.START;
             }
@@ -199,8 +214,8 @@ namespace PacMan.Entities.Ghosts
         protected void ChangeDirectionBasedOnTarget(Tile targetTile) 
         {
             if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
-                | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
-                | Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                || Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
+                || this.tileLocation == this.houseTargetTile)
             {
                 if (this.canChangeDirection == true)
                 {

@@ -17,7 +17,10 @@ namespace PacMan.Entities.Ghosts
         {
             this.timerRunning = true;
             this.movementMode = Modes.SCATTER;
+
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[24, 0];
+            this.houseTargetTile = Map.Map.GetInstance().Tiles[14, 18];
+            
             this.fileName = "blinky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
         }
