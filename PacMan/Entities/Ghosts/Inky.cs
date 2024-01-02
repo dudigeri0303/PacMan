@@ -7,24 +7,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PacMan.Entities.Ghosts.GhostAccessories;
 
 namespace PacMan.Entities.Ghosts
 {
     public class Inky : GhostBase
+
     {
         private Blinky blinky;
         public Blinky Blinky { set { blinky = value; } }
         public Inky(int x, int y, int width, int height, Blinky blinky) : base(x, y, width, height)
         {
-            this.timerRunning = false;
             this.movementMode = Modes.IDLEINHOUSE;
 
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[27, 31];
             this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 18];
+            this.startTargetTile = Map.Map.GetInstance().Tiles[12, 14];
 
             this.fileName = "inky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
             this.blinky = blinky;
+
+            this.timer = new Timer(false);
+        }
+
+        protected override void IdleInHouse(Player.Player player, Blinky blinky)
+        {
+            this.direction = Direction.NONE;
+            if (player.Points >= 40 & this.MovementMode == Modes.IDLEINHOUSE)
+            {
+                this.AllowDoor = true;
+                this.MovementMode = Modes.START;
+            }
+
         }
 
         protected override void Chase(Player.Player player)
@@ -81,5 +96,7 @@ namespace PacMan.Entities.Ghosts
 
             this.ChangeDirectionBasedOnTarget(targetTile);
         }
+
+        
     }
 }

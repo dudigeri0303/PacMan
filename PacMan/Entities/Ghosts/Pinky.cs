@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using PacMan.Entities.Ghosts;
+using PacMan.Entities.Ghosts.GhostAccessories;
 using PacMan.Map;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,16 @@ namespace PacMan.Entities.Ghosts
     {
         public Pinky(int x, int y, int width, int height) : base(x, y, width, height)
         {
-            this.timerRunning = false;
             this.movementMode = Modes.IDLEINHOUSE;
             
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[2, 0];
             this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 17];
+            this.startTargetTile = Map.Map.GetInstance().Tiles[14, 14];
 
             this.fileName = "pinky_test.png";
             this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
+
+            this.timer = new Timer(false);
         }
 
         protected override void Chase(Player.Player player)
@@ -68,6 +71,19 @@ namespace PacMan.Entities.Ghosts
                     break;
             }
             this.ChangeDirectionBasedOnTarget(targetTile);
+        }
+
+        protected override void IdleInHouse(Player.Player player, Blinky blinky)
+        {
+            this.direction = Direction.NONE;
+            if (blinky.TileLocation != null)
+            {
+                if (this.MovementMode == Modes.IDLEINHOUSE & (blinky.TileLocation.i < 13 || blinky.TileLocation.i > 14))
+                {
+                    this.AllowDoor = true;
+                    this.MovementMode = Modes.START;
+                }
+            }
         }
     }
 }

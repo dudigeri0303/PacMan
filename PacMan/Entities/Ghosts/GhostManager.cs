@@ -34,65 +34,24 @@ namespace PacMan.Entities.Ghosts
             this.timeElapsed = 0;
         }
 
-        private void ManageBlinky() 
-        {
-        
-        }
-
-        private void ManagePinky()
-        {
-            if(this.blinky.TileLocation != null) 
-            {
-                if (this.pinky.MovementMode == Modes.IDLEINHOUSE & (this.blinky.TileLocation.i < 13 || this.blinky.TileLocation.i > 14))
-                {
-                    this.pinky.AllowDoor = true;
-                    this.pinky.MovementMode = Modes.START;
-                }
-            }
-        }
-
-        private void ManageInky(Player.Player player)
-        {
-            if(player.Points > 40 & this.inky.MovementMode == Modes.IDLEINHOUSE) 
-            {
-                this.inky.AllowDoor = true;
-                this.inky.MovementMode = Modes.START;
-            }
-
-        }
-
-        private void ManageClyde(Player.Player player)
-        {
-            if (player.Points > 72 & this.clyde.MovementMode == Modes.IDLEINHOUSE)
-            {
-                this.clyde.AllowDoor = true;
-                this.clyde.MovementMode = Modes.START;
-            }
-        }
-
-        private void ChangeMode(Player.Player player, float seconds) 
+        private void ChangeMode(Player.Player player, float time) 
         {
 
             foreach (GhostBase ghost in this.ghosts)
             {
-                if (ghost.TimerRunning) 
-                { 
-                    ghost.TimeElapsed = seconds;
-                    ghost.ChangeModeBasedOnTime();
-                }
-
                 if (ghost.TileLocation == ghost.StartTargetTile & ghost.MovementMode == Modes.START)
                 {
                     ghost.AllowDoor = false;
-                    ghost.TimerRunning = true;
+                    ghost.timer.TimerRunning = true;
                     ghost.MovementMode = Modes.SCATTER;
                 }
-            }
 
-            this.ManageBlinky();
-            this.ManagePinky();
-            this.ManageInky(player);
-            this.ManageClyde(player);
+                if (ghost.timer.TimerRunning) 
+                {
+                    ghost.timer.IncraseTimeElapsed(time);
+                    ghost.timer.ChangeGhostModeBasedOnTime(ghost);
+                }
+            }
         }
 
         public void MakeGhostsFrightened() 
@@ -111,7 +70,7 @@ namespace PacMan.Entities.Ghosts
             this.ChangeMode(player, seconds);
             foreach (var ghost in this.ghosts)
             {
-                ghost.UpdateGhost(player, seconds);
+                ghost.UpdateGhost(player, seconds, this.blinky);
             }
         }
 

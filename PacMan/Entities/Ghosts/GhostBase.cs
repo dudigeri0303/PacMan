@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PacMan.Entities.Ghosts.GhostAccessories;
 
 namespace PacMan.Entities.Ghosts
 {
@@ -35,19 +36,8 @@ namespace PacMan.Entities.Ghosts
         }
         
         protected Random random;
+        public Timer timer;
 
-        protected bool timerRunning;
-        public bool TimerRunning
-        {
-            get { return timerRunning; }
-            set { timerRunning = value; }
-        }
-
-        protected float timeElapsed;
-        public float TimeElapsed {  set { timeElapsed += value; } }
-        
-        protected float frightenedTImeElapsed;
-        protected bool frightenedTimerRunning;
         public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
         {
             this.path = Game1.PathToGhostImages;
@@ -57,11 +47,6 @@ namespace PacMan.Entities.Ghosts
             this.canChangeDirection = true;
             
             this.allowDoor = true;
-
-            this.frightenedTimerRunning = false;
-            this.frightenedTImeElapsed = 0;
-
-            this.startTargetTile = Map.Map.GetInstance().Tiles[12, 14];
             
             this.random = new Random();
         }
@@ -84,7 +69,8 @@ namespace PacMan.Entities.Ghosts
                         tempList.Add(tile);
                     }
                     else if (Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
-                            | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                            | Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
+                            | Map.Map.GetInstance().DoorTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
                     {
                         if (this.movementMode == Modes.START)
                         {
@@ -93,70 +79,72 @@ namespace PacMan.Entities.Ghosts
                         else if (this.movementMode == Modes.RUNBACKTOHOUSE) 
                         {
                             this.possibleDirections.Add(Direction.DOWN);
+                            this.nextDirection = Direction.DOWN;
                         }
-                    
-                    
                     }
                 }
                 this.tilesAround = tempList;
             }
         }
 
-        protected void IdleInHouse() 
-        {
-            this.nextDirection = Direction.NONE;
-        }
-
+        protected abstract void IdleInHouse(Player.Player player, Blinky blinky);
+        protected abstract void Chase(Player.Player player);
         protected void Start() 
         {
-            this.ChangeDirectionBasedOnTarget(this.startTargetTile);
-        
+            if (this.tileLocation != this.startTargetTile)
+            {
+                this.ChangeDirectionBasedOnTarget(this.startTargetTile);
+            }
+            else 
+            {
+                this.timer.TimerRunning = true;
+                this.allowDoor = false;
+                this.movementMode = Modes.SCATTER;
+            }
+            
         }
-
-        protected abstract void Chase(Player.Player player);
         protected void Scatter() 
         {
             this.ChangeDirectionBasedOnTarget(this.scatterTargetTile);
         }
-        protected void Frightened(float seconds)
+        protected void Frightened(float time)
         {
-            if (!this.frightenedTimerRunning)
+            if (!this.timer.FrightenedTimerRunning)
             {
-                this.frightenedTimerRunning = true;
-                this.timerRunning = false;
-            }
-            else 
-            {
-                this.frightenedTImeElapsed += seconds;
-                
+                this.timer.FrightenedTimerRunning = true;
+                this.timer.TimerRunning = false;
             }
 
-            if (this.frightenedTimerRunning & (int)Math.Floor(this.frightenedTImeElapsed) != 10)
+            if(this.timer.FrightenedTimerRunning)
             {
-                if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
+                if ((int)Math.Floor(this.timer.FrightenedTimeElapsed) != 10)
                 {
-                    if (this.canChangeDirection == true)
+                    if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
                     {
-                        this.canChangeDirection = false;
-                        this.RemoveReverseDirection();
-                        var randIndex = this.random.Next(0, this.possibleDirections.Count);
-                        this.nextDirection = this.possibleDirections[randIndex];
+                        if (this.canChangeDirection == true)
+                        {
+                            this.canChangeDirection = false;
+                            this.RemoveReverseDirection();
+                            var randIndex = this.random.Next(0, this.possibleDirections.Count);
+                            this.nextDirection = this.possibleDirections[randIndex];
+                        }
                     }
+                    else if (!this.canChangeDirection) { this.canChangeDirection = true; }
                 }
-                else if (!this.canChangeDirection) { this.canChangeDirection = true; }
-            }
-            else if (this.frightenedTimerRunning & (int)Math.Floor(this.frightenedTImeElapsed) == 10) 
-            {
-                this.frightenedTImeElapsed = 0;
-                this.frightenedTimerRunning = false;
-                this.timerRunning = true;
-                this.MovementMode = Modes.SCATTER;
+                else 
+                {
+                    this.timer.FrightenedTimeElapsed = 0;
+                    this.timer.FrightenedTimerRunning = false;
+                    
+                    this.timer.TimerRunning = true;
+                    
+                    this.MovementMode = Modes.IDLEINHOUSE;
+                }
             }
         }
-
         protected void RunBackToHouse() 
         {
-            if (this.tileLocation != this.houseTargetTile)
+            if (!Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.speed != 4) 
                 {
@@ -167,18 +155,18 @@ namespace PacMan.Entities.Ghosts
             }
             else 
             {
-                this.allowDoor = false;
                 this.speed = 2;
-                this.movementMode = Modes.START;
+                this.movementMode = Modes.IDLEINHOUSE;
+                Debug.WriteLine("fos");
             }
         }
 
-        private void ExecuteMovementBasedOnMode(Player.Player player, float seconds) 
+        private void ExecuteMovementBasedOnMode(Player.Player player, float seconds, Blinky blinky) 
         {
             switch (this.movementMode) 
             {
                 case Modes.IDLEINHOUSE:
-                    this.IdleInHouse(); 
+                    this.IdleInHouse(player, blinky); 
                     break;
                 case Modes.START:
                     this.Start(); 
@@ -215,7 +203,7 @@ namespace PacMan.Entities.Ghosts
         {
             if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
                 || Map.Map.GetInstance().GhostStartIntersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j))
-                || this.tileLocation == this.houseTargetTile)
+                || Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
             {
                 if (this.canChangeDirection == true)
                 {
@@ -253,21 +241,6 @@ namespace PacMan.Entities.Ghosts
             else if(!this.canChangeDirection) { this.canChangeDirection = true; }
         }
 
-        public void ChangeModeBasedOnTime() 
-        {
-            if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & this.movementMode != Modes.CHASE) 
-            { 
-                this.movementMode = Modes.CHASE;
-                if ((int)Math.Floor(this.timeElapsed) == 84) 
-                {
-                    this.timerRunning = false;
-                }
-            }
-            else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & this.movementMode != Modes.SCATTER) 
-            { 
-                this.movementMode = Modes.SCATTER;
-            }
-        }
 
         public override void Update()
         {
@@ -283,20 +256,19 @@ namespace PacMan.Entities.Ghosts
             this.UpdateRectValue();
         }
 
-        public void UpdateGhost(Player.Player player, float seconds)
+        public void UpdateGhost(Player.Player player, float seconds, Blinky blinky)
         {
             if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
             {
                 this.ResetTeleportedValue();
                 this.UpdateTilesAround();
-                this.ExecuteMovementBasedOnMode(player, seconds);
+                this.ExecuteMovementBasedOnMode(player, seconds, blinky);
                 this.Update();
             }
             else 
             {
                 this.UpdateWhenOutOfBounds();
             }
-            
         }
     }
 }
