@@ -21,8 +21,8 @@ namespace PacMan.Entities.Ghosts
             this.movementMode = Modes.IDLEINHOUSE;
 
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[27, 31];
-            this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 18];
-            this.startTargetTile = Map.Map.GetInstance().Tiles[12, 14];
+            this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 17];
+            this.startTargetTile = Map.Map.GetInstance().Tiles[14, 14];
 
             this.blinky = blinky;
 
@@ -32,7 +32,7 @@ namespace PacMan.Entities.Ghosts
         protected override void IdleInHouse(Player.Player player, Blinky blinky)
         {
             this.direction = Direction.NONE;
-            if (player.Points >= 40 & this.MovementMode == Modes.IDLEINHOUSE)
+            if (player.PointCounter.Points >= 23 & this.MovementMode == Modes.IDLEINHOUSE)
             {
                 this.AllowDoor = true;
                 this.MovementMode = Modes.START;

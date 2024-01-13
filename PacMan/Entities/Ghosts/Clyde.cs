@@ -28,7 +28,7 @@ namespace PacMan.Entities.Ghosts
         {
             this.nextDirection = Direction.NONE;
 
-            if (player.Points > 72 & this.MovementMode == Modes.IDLEINHOUSE)
+            if (player.PointCounter.Points > 37 & this.MovementMode == Modes.IDLEINHOUSE)
             {
                 this.AllowDoor = true;
                 this.MovementMode = Modes.START;

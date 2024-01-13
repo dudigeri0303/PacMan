@@ -1,33 +1,39 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using PacMan.Entities.EntityAnimations;
 using PacMan.Entities.Ghosts;
 using PacMan.Map;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PacMan.Entities.Player.PlayerAccessories;
 
 namespace PacMan.Entities.Player
 {
     public class Player : EntityBase
     {
-        private int points;
-        public int Points { get { return points; } }
-
-        private int healthPoints;
-        
         private List<Pellet> pelletsAround;
 
+        private bool canCollideWithGhost;
+
         private GhostManager ghostManager;
+        private Clock clock;
+        private HealthBar healthBar;
+        private PointCounter pointCounter;
+        public PointCounter PointCounter { get { return pointCounter; } }
 
         public Player(int x, int y, int width, int height, int numOfFrames, string path, string fileName, Pellet[,] pelletArray, GhostManager ghostManager) : base(x, y, width, height, numOfFrames, path, fileName)
         {
-            this.points = 0;
-            this.healthPoints = 3;
+            this.speed = 2;
+            this.animation = new Animation(numOfFrames, 0.03f, 32, 32, path, fileName);
             this.pelletsAround = new List<Pellet>();
+
+            this.canCollideWithGhost = true;
+            
             this.ghostManager = ghostManager;
+            this.clock = new Clock();
+            this.healthBar = new HealthBar();
+            this.pointCounter = new PointCounter();
         }
 
         private void UpdatePelletsAround()
@@ -56,7 +62,7 @@ namespace PacMan.Entities.Player
 
                 if (this.rectangle.Contains(pellet.Rect)) 
                 {
-                    this.points++;
+                    this.pointCounter.IncrasePoints();
                     pellet.WhenEaten();
                 }
             }
@@ -64,19 +70,31 @@ namespace PacMan.Entities.Player
 
         private void GhostCollision() 
         {
+            int collideCount = 0;
             foreach (var ghost in this.ghostManager.Ghosts)
             {
-                if (this.rectangle.Contains(ghost.Rectangle))
+                if (this.rectangle.Intersects(ghost.Rectangle))
                 {
+                    collideCount++;
                     if (ghost.MovementMode == Modes.FRIGHTENED)
                     {
                         ghost.MovementMode = Modes.RUNBACKTOHOUSE;
                     }
-                    else 
+
+                    else if (this.canCollideWithGhost & ghost.MovementMode != Modes.RUNBACKTOHOUSE)
                     {
-                        this.healthPoints--;
+                        if (this.healthBar.HealthPoints != 1)
+                        {
+                            this.canCollideWithGhost = false;
+                            this.healthBar.DecreaseHealth();
+                        }
+                        else { Game1.NewGame(); }
                     }
                 }
+            }
+            if (collideCount == 0) 
+            {
+                this.canCollideWithGhost = true;
             }
         }
 
@@ -104,11 +122,25 @@ namespace PacMan.Entities.Player
             }
         }
 
-        public override void Update()
+
+        public override void Draw()
+        {
+            Vector2 drawVector = new Vector2(this.position.X - 8, this.position.Y - 8);
+            this.animation.DrawAnimation(drawVector);
+            this.healthBar.DrawHealth();
+            this.clock.DrawTime();
+            this.pointCounter.DrawPoints();
+            
+        }
+
+        public override void Update(float time)
         {
             this.ChangeAnimationBasedOnDirection();
+            
             this.animation.Update();
-            if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
+            this.clock.UpdateTime(time);
+
+            if (this.rectangle.X >= Game1.LeftBoundary & this.rectangle.X <= Game1.RightBoundary)
             {
                 this.ResetTeleportedValue();
                 this.UpdateTilesAround();

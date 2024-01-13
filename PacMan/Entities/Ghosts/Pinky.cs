@@ -66,6 +66,9 @@ namespace PacMan.Entities.Ghosts
                     else { incrasValue = 4 - ((playerTile.i) - 22); }
                     targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i + incrasValue, player.TileLocation.j];
                     break;
+                case Direction.NONE:
+                    targetTile = Map.Map.GetInstance().Tiles[player.TileLocation.i, player.TileLocation.j];
+                    break;
             }
             this.ChangeDirectionBasedOnTarget(targetTile);
         }

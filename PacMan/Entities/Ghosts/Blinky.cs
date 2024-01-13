@@ -1,14 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using PacMan.Entities.Ghosts.GhostAccessories;
+﻿using PacMan.Entities.Ghosts.GhostAccessories;
 using PacMan.Map;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PacMan.Entities.Ghosts
 {
@@ -41,7 +32,5 @@ namespace PacMan.Entities.Ghosts
             Tile targetTile = player.TileLocation;
             this.ChangeDirectionBasedOnTarget(targetTile);
         }
-
-        
     }
 }

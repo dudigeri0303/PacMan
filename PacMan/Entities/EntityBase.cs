@@ -53,7 +53,6 @@ namespace PacMan.Entities
         {
             this.width = width;
             this.height = height;
-            this.speed = 3;
 
             this.position = new Vector2((float)x, (float)y);
             this.rectangle = new Rectangle((int)this.position.X, (int)this.position.Y, width, height);
@@ -83,8 +82,8 @@ namespace PacMan.Entities
             this.illegalRightCollision = false;
             this.teleported = false;
 
-            this.animation = new Animation(numOfFrames, 0.1f, 32, 32, path, fileName);
-        
+            Tuple<int, int> tileLoc = this.CalcTileLocation();
+            this.tileLocation = Map.Map.GetInstance().Tiles[tileLoc.Item1, tileLoc.Item2];
         }
 
         protected void FillPossibleDirections()
@@ -102,18 +101,23 @@ namespace PacMan.Entities
             this.illegalUpCollision = false;
         }
 
+        private Tuple<int, int> CalcTileLocation() 
+        {
+            int i = this.direction == Direction.LEFT ?
+               (int)Math.Ceiling((double)this.position.X / (double)this.width) : (int)Math.Floor((double)this.position.X / (double)this.width);
+
+            int j = this.direction == Direction.UP ?
+                (int)Math.Ceiling((double)this.position.Y / (double)this.height) : (int)Math.Floor((double)this.position.Y / (double)this.height);
+
+            return Tuple.Create(i, j);
+        }
+
         protected virtual void UpdateTilesAround()
         {
             this.FillPossibleDirections();
             this.tilesAround.Clear();
 
-            int i = this.direction == Direction.LEFT ?
-                (int)Math.Ceiling((double)this.position.X / (double)this.width) : (int)Math.Floor((double)this.position.X / (double)this.width);
-
-            int j = this.direction == Direction.UP ?
-                (int)Math.Ceiling((double)this.position.Y / (double)this.height) : (int)Math.Floor((double)this.position.Y / (double)this.height);
-
-            var tileLocation = Tuple.Create(i, j);
+            Tuple<int, int> tileLocation = this.CalcTileLocation();
             this.tileLocation = Map.Map.GetInstance().Tiles[tileLocation.Item1, tileLocation.Item2];
 
             foreach (var tile in this.tileOffsetsAround)
@@ -290,14 +294,10 @@ namespace PacMan.Entities
                 this.position.X = 0 - this.width;
                 this.UpdateRectValue();
             }
-        } 
-
-        public virtual void Draw()
-        {
-            Vector2 drawVector = new Vector2 (this.position.X -8, this.position.Y-8);
-            this.animation.DrawAnimation(drawVector);
         }
 
-        public abstract void Update();
+        public abstract void Draw();
+
+        public abstract void Update(float time);
     }
 }

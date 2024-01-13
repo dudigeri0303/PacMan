@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -125,6 +126,11 @@ namespace PacMan.Map
                     this.pellets[i, j].DrawTile();
                 }
             }
+        }
+
+        public void ResetMap() 
+        {
+            instance = null;
         }
     }
 }

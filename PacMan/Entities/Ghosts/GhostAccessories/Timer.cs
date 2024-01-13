@@ -52,14 +52,14 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
                 if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & ghost.MovementMode != Modes.CHASE)
                 {
                     ghost.MovementMode = Modes.CHASE;
-                    if ((int)Math.Floor(this.timeElapsed) == 84)
-                    {
-                        this.timerRunning = false;
-                    }
                 }
                 else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & ghost.MovementMode != Modes.SCATTER)
                 {
                     ghost.MovementMode = Modes.SCATTER;
+                }
+                else if ((int)Math.Floor(this.timeElapsed) >= 84)
+                {
+                    ghost.MovementMode = Modes.CHASE;    
                 }
             }
         }

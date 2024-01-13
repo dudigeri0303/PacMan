@@ -34,32 +34,12 @@ namespace PacMan.Entities.Ghosts
             this.timeElapsed = 0;
         }
 
-        private void ChangeMode(Player.Player player, float time) 
-        {
-
-            foreach (GhostBase ghost in this.ghosts)
-            {
-                if (ghost.TileLocation == ghost.StartTargetTile & ghost.MovementMode == Modes.START)
-                {
-                    ghost.AllowDoor = false;
-                    ghost.timer.TimerRunning = true;
-                    ghost.MovementMode = Modes.SCATTER;
-                }
-
-                if (ghost.timer.TimerRunning) 
-                {
-                    ghost.timer.IncraseTimeElapsed(time);
-                    ghost.timer.ChangeGhostModeBasedOnTime(ghost);
-                }
-            }
-        }
-
         public void MakeGhostsFrightened() 
         {
             foreach (var ghost in this.ghosts) 
             {
-                if (ghost.MovementMode != Modes.START & ghost.MovementMode != Modes.IDLEINHOUSE) 
-                {
+                if (ghost.MovementMode != Modes.IDLEINHOUSE & ghost.MovementMode != Modes.RUNBACKTOHOUSE) 
+                { 
                     ghost.MovementMode = Modes.FRIGHTENED;
                 }
             }
@@ -67,7 +47,6 @@ namespace PacMan.Entities.Ghosts
 
         public void Update(Player.Player player, float seconds)
         {
-            this.ChangeMode(player, seconds);
             foreach (var ghost in this.ghosts)
             {
                 ghost.UpdateGhost(player, seconds, this.blinky);

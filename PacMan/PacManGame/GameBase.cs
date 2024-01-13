@@ -20,15 +20,15 @@ namespace PacMan.PacManGame
         public GameBase() 
         {
             this.ghostManager = new GhostManager();
-            this.player = new Player(96, 96, 24, 24, 8, Game1.PathToPlayerImages, "pacman_right.png", Map.Map.GetInstance().Pellets, this.ghostManager);
+            this.player = new Player(320, 624, 24, 24, 8, Game1.PathToPlayerImages, "pacman_right.png", Map.Map.GetInstance().Pellets, this.ghostManager);
             this.keyInputHandler = new KeyInputHandler();
         }
 
-        public void UpdateGame(float seconds) 
+        public void UpdateGame(float time) 
         {
             this.keyInputHandler.HandleKey(this.player);
-            this.player.Update();
-            this.ghostManager.Update(this.player, seconds);
+            this.player.Update(time);
+            this.ghostManager.Update(this.player, time);
         }
         public void DrawGame() 
         {

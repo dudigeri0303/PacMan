@@ -9,17 +9,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PacMan.Entities.Ghosts.GhostAccessories;
+using PacMan.Entities.EntityAnimations;
 
 namespace PacMan.Entities.Ghosts
 {
     public abstract class GhostBase : EntityBase
     {
-        protected Modes movementMode;
         public Rectangle Rectangle { get { return rectangle; } }
+        protected Modes movementMode;
         public Modes MovementMode 
         {
             get { return movementMode; }
             set {  movementMode = value; } 
+        }
+
+        protected Modes previousMode;
+        public Modes PreviousMode 
+        {
+            get { return previousMode; }
+            set {  previousMode = value; }
         }
 
         protected Tile scatterTargetTile;
@@ -49,17 +57,19 @@ namespace PacMan.Entities.Ghosts
             this.allowDoor = true;
             
             this.random = new Random();
+
+            this.animation = new Animation(numOfFrames, 0.1f, 32, 32, path, fileName);
         }
 
         protected override void UpdateTilesAround()
         {
             base.UpdateTilesAround();
-            
-            if(this.allowDoor) 
+
+            if (this.allowDoor)
             {
                 List<Tile> tempList = new List<Tile>();
 
-                foreach (Tile tile in this.tilesAround) 
+                foreach (Tile tile in this.tilesAround)
                 {
                     Tuple<int, int> tileLocation = Tuple.Create(tile.i, tile.j);
 
@@ -75,7 +85,7 @@ namespace PacMan.Entities.Ghosts
                         {
                             this.possibleDirections.Add(Direction.UP);
                         }
-                        else if (this.movementMode == Modes.RUNBACKTOHOUSE) 
+                        else if (this.movementMode == Modes.RUNBACKTOHOUSE)
                         {
                             this.possibleDirections.Add(Direction.DOWN);
                             this.nextDirection = Direction.DOWN;
@@ -88,20 +98,20 @@ namespace PacMan.Entities.Ghosts
 
         protected abstract void IdleInHouse(Player.Player player, Blinky blinky);
         protected abstract void Chase(Player.Player player);
-        protected void Start() 
+        protected void Start()
         {
             if (this.tileLocation != this.startTargetTile)
             {
                 this.ChangeDirectionBasedOnTarget(this.startTargetTile);
             }
-            else 
+            else
             {
                 this.timer.TimerRunning = true;
                 this.allowDoor = false;
                 this.movementMode = Modes.SCATTER;
             }
-            
         }
+
         protected void Scatter() 
         {
             this.ChangeDirectionBasedOnTarget(this.scatterTargetTile);
@@ -112,14 +122,17 @@ namespace PacMan.Entities.Ghosts
             {
                 this.timer.FrightenedTimerRunning = true;
                 this.timer.TimerRunning = false;
+                this.speed = 1;
                 this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + "scared_ghost_body.png");
             }
 
-            if(this.timer.FrightenedTimerRunning)
+            if(this.timer.FrightenedTimerRunning) 
             {
                 this.timer.IncraseFrightenedTimeElapsed(time);
+
                 if ((int)Math.Floor(this.timer.FrightenedTimeElapsed) != 10)
                 {
+                    //Random mozgás
                     if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
                     {
                         if (this.canChangeDirection == true)
@@ -132,19 +145,20 @@ namespace PacMan.Entities.Ghosts
                     }
                     else if (!this.canChangeDirection) { this.canChangeDirection = true; }
                 }
+
                 else 
                 {
                     this.timer.FrightenedTimeElapsed = 0;
                     this.timer.FrightenedTimerRunning = false;
-                    
                     this.timer.TimerRunning = true;
-                    
-                    this.MovementMode = Modes.IDLEINHOUSE;
+                    this.speed = 2;
+
+                    this.MovementMode = Modes.SCATTER;
                     this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
-                    Debug.WriteLine("NOT SCARED BITCH");
                 }
             }
         }
+
         protected void RunBackToHouse() 
         {
             if (!Map.Map.GetInstance().HouseTiles.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
@@ -159,6 +173,10 @@ namespace PacMan.Entities.Ghosts
             }
             else 
             {
+                this.timer.FrightenedTimeElapsed = 0;
+                this.timer.FrightenedTimerRunning = false;
+                this.timer.TimerRunning = true;
+
                 this.allowDoor = true;
                 this.speed = 2;
                 this.movementMode = Modes.IDLEINHOUSE;
@@ -247,7 +265,7 @@ namespace PacMan.Entities.Ghosts
         }
 
 
-        public override void Update()
+        public override void Update(float seconds)
         {
             this.UpdateDirection();
             this.UpdateSpeedVectorBasedOnDirection();
@@ -268,16 +286,19 @@ namespace PacMan.Entities.Ghosts
             this.eyeAnimation.DrawAnimation(drawVector);
         }
 
-        public void UpdateGhost(Player.Player player, float seconds, Blinky blinky)
+        public void UpdateGhost(Player.Player player, float time, Blinky blinky)
         {
+            this.timer.IncraseTimeElapsed(time);
+            this.timer.ChangeGhostModeBasedOnTime(this);
+
             this.animation.Update();
             this.eyeAnimation.Update();
-            if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
+            if (this.rectangle.X >= Game1.LeftBoundary & this.rectangle.X <= Game1.RightBoundary)
             {
                 this.ResetTeleportedValue();
                 this.UpdateTilesAround();
-                this.ExecuteMovementBasedOnMode(player, seconds, blinky);
-                this.Update();
+                this.ExecuteMovementBasedOnMode(player, time, blinky);
+                this.Update(time);
             }
             else 
             {
