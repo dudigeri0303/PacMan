@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using PacMan.Map;
 using System;
 using System.Collections.Generic;
@@ -37,11 +38,10 @@ namespace PacMan.Entities.Ghosts
         
         protected Random random;
         public Timer timer;
+        protected EntityAnimations.Animation eyeAnimation = new EntityAnimations.Animation(8, 0.1f, 32, 32, Game1.PathToGhostImages, "ghost_eye.png");
 
-        public GhostBase(int x, int y, int width, int height) : base(x, y, width, height)
+        public GhostBase(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
-            this.path = Game1.PathToGhostImages;
-
             this.speed = 2;
 
             this.canChangeDirection = true;
@@ -51,7 +51,6 @@ namespace PacMan.Entities.Ghosts
             this.random = new Random();
         }
 
-        //TODO visszameneskor legyen nyitva az ajto
         protected override void UpdateTilesAround()
         {
             base.UpdateTilesAround();
@@ -113,10 +112,12 @@ namespace PacMan.Entities.Ghosts
             {
                 this.timer.FrightenedTimerRunning = true;
                 this.timer.TimerRunning = false;
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + "scared_ghost_body.png");
             }
 
             if(this.timer.FrightenedTimerRunning)
             {
+                this.timer.IncraseFrightenedTimeElapsed(time);
                 if ((int)Math.Floor(this.timer.FrightenedTimeElapsed) != 10)
                 {
                     if (Map.Map.GetInstance().Intersections.Contains(Tuple.Create(this.tileLocation.i, this.tileLocation.j)))
@@ -139,6 +140,8 @@ namespace PacMan.Entities.Ghosts
                     this.timer.TimerRunning = true;
                     
                     this.MovementMode = Modes.IDLEINHOUSE;
+                    this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
+                    Debug.WriteLine("NOT SCARED BITCH");
                 }
             }
         }
@@ -149,15 +152,17 @@ namespace PacMan.Entities.Ghosts
                 if (this.speed != 4) 
                 {
                     this.speed = 4;
+                    this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + "transparent_ghost_body.png");
                     this.allowDoor = true;
                 }
                 this.ChangeDirectionBasedOnTarget(this.houseTargetTile); ;
             }
             else 
             {
+                this.allowDoor = true;
                 this.speed = 2;
                 this.movementMode = Modes.IDLEINHOUSE;
-                Debug.WriteLine("fos");
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
             }
         }
 
@@ -256,8 +261,17 @@ namespace PacMan.Entities.Ghosts
             this.UpdateRectValue();
         }
 
+        public override void Draw()
+        {
+            Vector2 drawVector = new Vector2(this.position.X - 8, this.position.Y - 8);
+            this.animation.DrawAnimation(drawVector);
+            this.eyeAnimation.DrawAnimation(drawVector);
+        }
+
         public void UpdateGhost(Player.Player player, float seconds, Blinky blinky)
         {
+            this.animation.Update();
+            this.eyeAnimation.Update();
             if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
             {
                 this.ResetTeleportedValue();

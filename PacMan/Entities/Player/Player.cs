@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using PacMan.Entities.EntityAnimations;
 using PacMan.Entities.Ghosts;
 using PacMan.Map;
 using System;
@@ -21,11 +22,8 @@ namespace PacMan.Entities.Player
 
         private GhostManager ghostManager;
 
-        public Player(int x, int y, int width, int height, Pellet[,] pelletArray, GhostManager ghostManager) : base(x, y, width, height)
+        public Player(int x, int y, int width, int height, int numOfFrames, string path, string fileName, Pellet[,] pelletArray, GhostManager ghostManager) : base(x, y, width, height, numOfFrames, path, fileName)
         {
-            this.path = Game1.PathToPlayerImages;
-            this.fileName = "pacman_dummy24.png";
-            this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
             this.points = 0;
             this.healthPoints = 3;
             this.pelletsAround = new List<Pellet>();
@@ -73,7 +71,6 @@ namespace PacMan.Entities.Player
                     if (ghost.MovementMode == Modes.FRIGHTENED)
                     {
                         ghost.MovementMode = Modes.RUNBACKTOHOUSE;
-                        Debug.WriteLine("runningbackbitch");
                     }
                     else 
                     {
@@ -83,8 +80,34 @@ namespace PacMan.Entities.Player
             }
         }
 
+        private void ChangeAnimationBasedOnDirection() 
+        {
+            if (this.Direction == Direction.UP & this.animation.FileName != "pacman_up.png")
+            {
+                this.animation.FileName = "pacman_up.png";
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToPlayerImages + "pacman_up.png");
+            }
+            else if (this.Direction == Direction.DOWN & this.animation.FileName != "pacman_down.png")
+            {
+                this.animation.FileName = "pacman_down.png";
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToPlayerImages + "pacman_down.png");
+            }
+            else if (this.Direction == Direction.LEFT & this.animation.FileName != "pacman_left.png")
+            {
+                this.animation.FileName = "pacman_left.png";
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToPlayerImages + "pacman_left.png");
+            }
+            else if (this.Direction == Direction.RIGHT & this.animation.FileName != "pacman_right.png")
+            {
+                this.animation.FileName = "pacman_right.png";
+                this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToPlayerImages + "pacman_right.png");
+            }
+        }
+
         public override void Update()
         {
+            this.ChangeAnimationBasedOnDirection();
+            this.animation.Update();
             if (this.rectangle.X >= 24 & this.rectangle.X <= 624)
             {
                 this.ResetTeleportedValue();

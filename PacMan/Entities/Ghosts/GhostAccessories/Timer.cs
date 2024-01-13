@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PacMan.Entities.Ghosts.GhostAccessories
 {
@@ -46,17 +47,20 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
 
         public void ChangeGhostModeBasedOnTime(GhostBase ghost) 
         {
-            if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & ghost.MovementMode != Modes.CHASE)
+            if (this.timerRunning) 
             {
-                ghost.MovementMode = Modes.CHASE;
-                if ((int)Math.Floor(this.timeElapsed) == 84)
+                if (((int)Math.Floor(this.timeElapsed) == 7 || (int)Math.Floor(this.timeElapsed) == 34 || (int)Math.Floor(this.timeElapsed) == 59 || (int)Math.Floor(this.timeElapsed) == 84) & ghost.MovementMode != Modes.CHASE)
                 {
-                    this.timerRunning = false;
+                    ghost.MovementMode = Modes.CHASE;
+                    if ((int)Math.Floor(this.timeElapsed) == 84)
+                    {
+                        this.timerRunning = false;
+                    }
                 }
-            }
-            else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & ghost.MovementMode != Modes.SCATTER)
-            {
-                ghost.MovementMode = Modes.SCATTER;
+                else if (((int)Math.Floor(this.timeElapsed) == 27 || (int)Math.Floor(this.timeElapsed) == 54 || (int)Math.Floor(this.timeElapsed) == 79) & ghost.MovementMode != Modes.SCATTER)
+                {
+                    ghost.MovementMode = Modes.SCATTER;
+                }
             }
         }
     }

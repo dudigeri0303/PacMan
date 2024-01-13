@@ -21,10 +21,10 @@ namespace PacMan.Entities.Ghosts
 
         public GhostManager()
         {
-            this.blinky = new Blinky(312, 336, 24, 24);
-            this.pinky = new Pinky(312, 408, 24, 24);
-            this.inky = new Inky(312, 432, 24, 24, this.blinky);
-            this.clyde = new Clyde(336, 408, 24, 24);
+            this.blinky = new Blinky(312, 336, 24, 24, 3, Game1.PathToGhostImages, "blinky_body.png");
+            this.pinky = new Pinky(312, 408, 24, 24, 3, Game1.PathToGhostImages, "pinky_body.png");
+            this.inky = new Inky(312, 432, 24, 24, 3, Game1.PathToGhostImages, "inky_body.png", this.blinky);
+            this.clyde = new Clyde(336, 408, 24, 24, 3, Game1.PathToGhostImages, "clyde_body.png");
 
             this.ghosts = new List<GhostBase>()
             {

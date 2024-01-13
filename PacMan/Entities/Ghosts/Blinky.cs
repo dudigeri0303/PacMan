@@ -14,16 +14,13 @@ namespace PacMan.Entities.Ghosts
 {
     public class Blinky : GhostBase
     {
-        public Blinky(int x, int y, int width, int height) : base(x, y, width, height)
+        public Blinky(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
             this.movementMode = Modes.SCATTER;
 
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[24, 0];
             this.houseTargetTile = Map.Map.GetInstance().Tiles[14, 18];
             this.startTargetTile = Map.Map.GetInstance().Tiles[13, 14];
-
-            this.fileName = "blinky_test.png";
-            this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
 
             this.timer = new Timer(true);
         }

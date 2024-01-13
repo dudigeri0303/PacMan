@@ -13,7 +13,7 @@ namespace PacMan
 
         public static string PathToTileImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\TileImages\\";
         public static string PathToPelletImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletImages\\";
-        public static string PathToTileArray { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\MapDummy.txt";
+        public static string PathToTileArray { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\Map.txt";
         public static string PathToPelletArray { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\MapAssets\\PelletMap.txt";
         public static string PathToGhostImages { get; } = $"C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\EntityAssets\\GhostAssets\\";
         public static string PathToPlayerImages { get; } = "C:\\Users\\Gergő\\source\\repos\\PacMan\\PacMan\\Assets\\EntityAssets\\PlayerAssets\\";
@@ -22,6 +22,7 @@ namespace PacMan
         public static int TileWidth { get; } = 24;
         public static int TileHeight { get; } = 24;
         public static int NumOfTiles { get; } = 27;
+        public static float TotalGameTime { get; set; }
 
         private int windowWidth = 672;
         private int windowHeight = 864;
@@ -53,7 +54,7 @@ namespace PacMan
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            TotalGameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             this._game.UpdateGame((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Update(gameTime);

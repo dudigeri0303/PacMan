@@ -13,16 +13,13 @@ namespace PacMan.Entities.Ghosts
 {
     public class Pinky : GhostBase
     {
-        public Pinky(int x, int y, int width, int height) : base(x, y, width, height)
+        public Pinky(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
             this.movementMode = Modes.IDLEINHOUSE;
             
             this.scatterTargetTile = Map.Map.GetInstance().Tiles[2, 0];
             this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 17];
             this.startTargetTile = Map.Map.GetInstance().Tiles[14, 14];
-
-            this.fileName = "pinky_test.png";
-            this.texture = Texture2D.FromFile(Game1._graphics.GraphicsDevice, this.path + this.fileName);
 
             this.timer = new Timer(false);
         }

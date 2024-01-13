@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PacMan.Entities.EntityAnimations;
 using PacMan.Map;
 
 namespace PacMan.Entities
@@ -17,10 +18,6 @@ namespace PacMan.Entities
         protected int width, height;
         protected Vector2 position;
         protected Rectangle rectangle;
-        protected Texture2D texture;
-
-        protected string path;
-        protected string fileName;
 
         protected int speed;
         protected Vector2 horizontalAndVerticalSpeeds;
@@ -50,7 +47,9 @@ namespace PacMan.Entities
 
         protected bool teleported;
 
-        public EntityBase(int x, int y, int width, int height)
+        public Animation animation;
+
+        public EntityBase(int x, int y, int width, int height, int numOfFrames, string path, string fileName)
         {
             this.width = width;
             this.height = height;
@@ -83,6 +82,8 @@ namespace PacMan.Entities
             this.illegalLeftCollision = false;
             this.illegalRightCollision = false;
             this.teleported = false;
+
+            this.animation = new Animation(numOfFrames, 0.1f, 32, 32, path, fileName);
         
         }
 
@@ -291,10 +292,12 @@ namespace PacMan.Entities
             }
         } 
 
-        public void Draw()
+        public virtual void Draw()
         {
-            Game1._spriteBatch.Draw(this.texture, this.rectangle, Color.White);
+            Vector2 drawVector = new Vector2 (this.position.X -8, this.position.Y-8);
+            this.animation.DrawAnimation(drawVector);
         }
+
         public abstract void Update();
     }
 }
