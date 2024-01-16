@@ -21,7 +21,7 @@ namespace PacMan.Entities.Ghosts
             this.houseTargetTile = Map.Map.GetInstance().Tiles[13, 17];
             this.startTargetTile = Map.Map.GetInstance().Tiles[14, 14];
 
-            this.timer = new Timer(false);
+            this.timer = new GhostTimer(false);
         }
 
         protected override void Chase(Player.Player player)

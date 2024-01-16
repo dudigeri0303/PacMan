@@ -38,7 +38,7 @@ namespace PacMan.Entities.Ghosts
         {
             foreach (var ghost in this.ghosts) 
             {
-                if (ghost.MovementMode != Modes.IDLEINHOUSE & ghost.MovementMode != Modes.RUNBACKTOHOUSE) 
+                if (ghost.MovementMode != Modes.IDLEINHOUSE & ghost.MovementMode != Modes.RUNBACKTOHOUSE & ghost.MovementMode != Modes.START) 
                 { 
                     ghost.MovementMode = Modes.FRIGHTENED;
                 }

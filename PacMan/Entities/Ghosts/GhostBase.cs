@@ -3,11 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using PacMan.Map;
 using System;
 using System.Collections.Generic;
-using PacMan.Entities.Player;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PacMan.Entities.Ghosts.GhostAccessories;
 using PacMan.Entities.EntityAnimations;
 
@@ -45,26 +41,22 @@ namespace PacMan.Entities.Ghosts
         }
         
         protected Random random;
-        public Timer timer;
+        public GhostTimer timer;
         protected EntityAnimations.Animation eyeAnimation = new EntityAnimations.Animation(8, 0.1f, 32, 32, Game1.PathToGhostImages, "ghost_eye.png");
 
         public GhostBase(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
             this.speed = 2;
+            this.random = new Random();
 
             this.canChangeDirection = true;
-            
             this.allowDoor = true;
-            
-            this.random = new Random();
 
             this.animation = new Animation(numOfFrames, 0.1f, 32, 32, path, fileName);
         }
 
-        protected override void UpdateTilesAround()
+        private void RemoveDoorTileIfAllowDoor() 
         {
-            base.UpdateTilesAround();
-
             if (this.allowDoor)
             {
                 List<Tile> tempList = new List<Tile>();
@@ -94,6 +86,12 @@ namespace PacMan.Entities.Ghosts
                 }
                 this.tilesAround = tempList;
             }
+        }
+
+        protected override void UpdateTilesAround()
+        {
+            base.UpdateTilesAround();
+            this.RemoveDoorTileIfAllowDoor();
         }
 
         protected abstract void IdleInHouse(Player.Player player, Blinky blinky);
@@ -300,7 +298,7 @@ namespace PacMan.Entities.Ghosts
                 this.ExecuteMovementBasedOnMode(player, time, blinky);
                 this.Update(time);
             }
-            else 
+            else
             {
                 this.UpdateWhenOutOfBounds();
             }

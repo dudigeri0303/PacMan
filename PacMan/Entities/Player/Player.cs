@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PacMan.Entities.Player.PlayerAccessories;
+using PacMan.PacManGame;
 
 namespace PacMan.Entities.Player
 {
@@ -17,8 +18,10 @@ namespace PacMan.Entities.Player
         private bool canCollideWithGhost;
 
         private GhostManager ghostManager;
-        private Clock clock;
+
         private HealthBar healthBar;
+        public HealthBar HealthBar { get { return healthBar; } }
+        
         private PointCounter pointCounter;
         public PointCounter PointCounter { get { return pointCounter; } }
 
@@ -31,7 +34,6 @@ namespace PacMan.Entities.Player
             this.canCollideWithGhost = true;
             
             this.ghostManager = ghostManager;
-            this.clock = new Clock();
             this.healthBar = new HealthBar();
             this.pointCounter = new PointCounter();
         }
@@ -83,12 +85,11 @@ namespace PacMan.Entities.Player
 
                     else if (this.canCollideWithGhost & ghost.MovementMode != Modes.RUNBACKTOHOUSE)
                     {
-                        if (this.healthBar.HealthPoints != 1)
+                        this.healthBar.DecreaseHealth();
+                        if (this.healthBar.HealthPoints != 0)
                         {
                             this.canCollideWithGhost = false;
-                            this.healthBar.DecreaseHealth();
                         }
-                        else { Game1.NewGame(); }
                     }
                 }
             }
@@ -128,7 +129,6 @@ namespace PacMan.Entities.Player
             Vector2 drawVector = new Vector2(this.position.X - 8, this.position.Y - 8);
             this.animation.DrawAnimation(drawVector);
             this.healthBar.DrawHealth();
-            this.clock.DrawTime();
             this.pointCounter.DrawPoints();
             
         }
@@ -138,7 +138,6 @@ namespace PacMan.Entities.Player
             this.ChangeAnimationBasedOnDirection();
             
             this.animation.Update();
-            this.clock.UpdateTime(time);
 
             if (this.rectangle.X >= Game1.LeftBoundary & this.rectangle.X <= Game1.RightBoundary)
             {

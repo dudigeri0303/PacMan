@@ -26,7 +26,7 @@ namespace PacMan.Entities.Ghosts
 
             this.blinky = blinky;
 
-            this.timer = new Timer(false);
+            this.timer = new GhostTimer(false);
         }
 
         protected override void IdleInHouse(Player.Player player, Blinky blinky)

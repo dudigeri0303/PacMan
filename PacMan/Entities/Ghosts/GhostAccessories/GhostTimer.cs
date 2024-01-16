@@ -1,16 +1,11 @@
-﻿using System;
+﻿using PacMan.PacManGame;
+using System;
 using System.Diagnostics;
 
 namespace PacMan.Entities.Ghosts.GhostAccessories
 {
-    public class Timer
+    public class GhostTimer : Timer
     {
-        private bool timerRunning;
-        public bool TimerRunning
-        {
-            get { return timerRunning; }
-            set { timerRunning = value; }
-        }
         private bool frightenedTimerRunning;
         public bool FrightenedTimerRunning
         {
@@ -18,27 +13,18 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
             set { frightenedTimerRunning = value; }
         }
 
-        private float timeElapsed;
-        public float TimeEladpsed { get { return timeElapsed; } }
-
         private float frightenedTimeElapsed;
         public float FrightenedTimeElapsed 
         { 
             get { return frightenedTimeElapsed; }
             set { frightenedTimeElapsed = value; }
         }
-        public Timer(bool timerRunning)
+        public GhostTimer(bool timerRunning) : base(timerRunning)
         {
-            this.timerRunning = timerRunning;
             this.frightenedTimerRunning = false;
-            this.timeElapsed = (float)0;
             this.frightenedTimeElapsed = (float)0;
         }
 
-        public void IncraseTimeElapsed(float time) 
-        {
-            this.timeElapsed += time;
-        }
 
         public void IncraseFrightenedTimeElapsed(float time) 
         {
@@ -57,7 +43,7 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
                 {
                     ghost.MovementMode = Modes.SCATTER;
                 }
-                else if ((int)Math.Floor(this.timeElapsed) >= 84)
+                else if ((int)Math.Floor(this.timeElapsed) >= 84 & ghost.MovementMode != Modes.CHASE)
                 {
                     ghost.MovementMode = Modes.CHASE;    
                 }
