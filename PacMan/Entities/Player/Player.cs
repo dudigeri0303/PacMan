@@ -10,7 +10,7 @@ using PacMan.Entities.Player.PlayerAccessories;
 
 namespace PacMan.Entities.Player
 {
-    public class Player : EntityBase
+    public class Player : EntityBase, ILevelUp
     {
         private List<Pellet> pelletsAround;
 
@@ -19,6 +19,7 @@ namespace PacMan.Entities.Player
         private GhostManager ghostManager;
         private Clock clock;
         private HealthBar healthBar;
+        private LevelCounter levelCounter;
         private PointCounter pointCounter;
         public PointCounter PointCounter { get { return pointCounter; } }
 
@@ -33,6 +34,7 @@ namespace PacMan.Entities.Player
             this.ghostManager = ghostManager;
             this.clock = new Clock();
             this.healthBar = new HealthBar();
+            this.levelCounter = new LevelCounter();
             this.pointCounter = new PointCounter();
         }
 
@@ -122,6 +124,16 @@ namespace PacMan.Entities.Player
             }
         }
 
+        public void ResetForLevelUp(int x, int y)
+        {
+            this.position.X = x;
+            this.position.Y = y;
+            this.UpdateRectValue();
+            this.healthBar.HealthPoints = 3;
+            this.direction = Direction.NONE;
+            this.levelCounter.IncraseLevel();
+        }
+
 
         public override void Draw()
         {
@@ -130,6 +142,7 @@ namespace PacMan.Entities.Player
             this.healthBar.DrawHealth();
             this.clock.DrawTime();
             this.pointCounter.DrawPoints();
+            this.levelCounter.DrawLevel();
             
         }
 

@@ -1,21 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using PacMan.Map;
-using PacMan.PacManGame;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PacMan.Entities.Ghosts.GhostAccessories;
 
 namespace PacMan.Entities.Ghosts
 {
-    public class Inky : GhostBase
+    public class Inky : GhostBase, ILevelUp
 
     {
         private Blinky blinky;
-        public Blinky Blinky { set { blinky = value; } }
         public Inky(int x, int y, int width, int height, int numOfFrames, string path, string fileName,  Blinky blinky) : base(x, y, width, height, numOfFrames, path, fileName)
         {
             this.movementMode = Modes.IDLEINHOUSE;
@@ -95,6 +87,18 @@ namespace PacMan.Entities.Ghosts
             this.ChangeDirectionBasedOnTarget(targetTile);
         }
 
-        
+        public void ResetForLevelUp(int x, int y)
+        {
+            this.position.X = x;
+            this.position.Y = y;
+            this.UpdateRectValue();
+            this.MovementMode = Modes.IDLEINHOUSE;
+            this.timer.TimerRunning = true;
+            this.timer.TimeEladpsed = 0;
+            this.timer.FrightenedTimeElapsed = 0;
+            this.timer.FrightenedTimerRunning = false;
+            this.speed = 2;
+            this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
+        }
     }
 }

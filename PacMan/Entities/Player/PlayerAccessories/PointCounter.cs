@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace PacMan.Entities.Player.PlayerAccessories
 {
@@ -22,6 +17,10 @@ namespace PacMan.Entities.Player.PlayerAccessories
         public void IncrasePoints() 
         {
             this.points++;
+            if(this.points % 244 == 0) 
+            {
+                Game1.LevelUp();
+            }
         }
 
         public void DrawPoints() 

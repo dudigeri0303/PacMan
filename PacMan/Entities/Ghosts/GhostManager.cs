@@ -1,10 +1,4 @@
-﻿using PacMan.Entities.Player;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PacMan.Entities.Ghosts
 {
@@ -43,6 +37,14 @@ namespace PacMan.Entities.Ghosts
                     ghost.MovementMode = Modes.FRIGHTENED;
                 }
             }
+        }
+
+        public void ResetForLevelUp() 
+        {
+            this.blinky.ResetForLevelUp(312, 336);
+            this.pinky.ResetForLevelUp(312, 408);
+            this.inky.ResetForLevelUp(312, 432);
+            this.clyde.ResetForLevelUp(336, 408);
         }
 
         public void Update(Player.Player player, float seconds)

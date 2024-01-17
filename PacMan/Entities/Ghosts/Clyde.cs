@@ -1,15 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using PacMan.Entities.Ghosts.GhostAccessories;
-using PacMan.Entities.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PacMan.Entities.Ghosts
 {
-    public class Clyde : GhostBase
+    public class Clyde : GhostBase, ILevelUp
     {
         public Clyde(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
@@ -41,6 +35,20 @@ namespace PacMan.Entities.Ghosts
 
             if (distance > 96) { this.ChangeDirectionBasedOnTarget(player.TileLocation); }
             else { this.ChangeDirectionBasedOnTarget(this.scatterTargetTile); }
+        }
+
+        public void ResetForLevelUp(int x, int y)
+        {
+            this.position.X = x;
+            this.position.Y = y;
+            this.UpdateRectValue();
+            this.MovementMode = Modes.IDLEINHOUSE;
+            this.timer.TimerRunning = true;
+            this.timer.TimeEladpsed = 0;
+            this.timer.FrightenedTimeElapsed = 0;
+            this.timer.FrightenedTimerRunning = false;
+            this.speed = 2;
+            this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
         }
     }
 }

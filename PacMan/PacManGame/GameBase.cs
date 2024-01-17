@@ -1,13 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using PacMan.Entities.Ghosts;
+﻿using PacMan.Entities.Ghosts;
 using PacMan.Entities.Player;
-using PacMan.Map;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace PacMan.PacManGame
 {
@@ -22,6 +14,13 @@ namespace PacMan.PacManGame
             this.ghostManager = new GhostManager();
             this.player = new Player(320, 624, 24, 24, 8, Game1.PathToPlayerImages, "pacman_right.png", Map.Map.GetInstance().Pellets, this.ghostManager);
             this.keyInputHandler = new KeyInputHandler();
+        }
+
+        public void LevelUp() 
+        {
+            this.ghostManager.ResetForLevelUp();
+            this.player.ResetForLevelUp(320, 624);
+            Map.Map.GetInstance().ResetMap();
         }
 
         public void UpdateGame(float time) 

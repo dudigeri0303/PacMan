@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,7 +7,11 @@ namespace PacMan.Entities.Player.PlayerAccessories
     public class HealthBar
     {
         private int healthPoints;
-        public int HealthPoints { get { return healthPoints; } }
+        public int HealthPoints 
+        { 
+            get { return healthPoints; }
+            set { healthPoints = value; }
+        }
         private List<Rectangle> healthPointRects;
         private Texture2D healtPointIcon;
 

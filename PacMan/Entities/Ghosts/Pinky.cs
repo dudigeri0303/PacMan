@@ -1,17 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using PacMan.Entities.Ghosts;
 using PacMan.Entities.Ghosts.GhostAccessories;
 using PacMan.Map;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PacMan.Entities.Ghosts
 {
-    public class Pinky : GhostBase
+    public class Pinky : GhostBase, ILevelUp
     {
         public Pinky(int x, int y, int width, int height, int numOfFrames, string path, string fileName) : base(x, y, width, height, numOfFrames, path, fileName)
         {
@@ -23,7 +16,6 @@ namespace PacMan.Entities.Ghosts
 
             this.timer = new Timer(false);
         }
-
         protected override void Chase(Player.Player player)
         {
             Tile playerTile = player.TileLocation;
@@ -72,7 +64,6 @@ namespace PacMan.Entities.Ghosts
             }
             this.ChangeDirectionBasedOnTarget(targetTile);
         }
-
         protected override void IdleInHouse(Player.Player player, Blinky blinky)
         {
             this.direction = Direction.NONE;
@@ -84,6 +75,19 @@ namespace PacMan.Entities.Ghosts
                     this.MovementMode = Modes.START;
                 }
             }
+        }
+        public void ResetForLevelUp(int x, int y)
+        {
+            this.position.X = x;
+            this.position.Y = y;
+            this.UpdateRectValue();
+            this.MovementMode = Modes.IDLEINHOUSE;
+            this.timer.TimerRunning = true;
+            this.timer.TimeEladpsed = 0;
+            this.timer.FrightenedTimeElapsed = 0;
+            this.timer.FrightenedTimerRunning = false;
+            this.speed = 2;
+            this.animation.SpriteSheet = Texture2D.FromFile(Game1._graphics.GraphicsDevice, Game1.PathToGhostImages + this.animation.FileName);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace PacMan.Entities.Ghosts.GhostAccessories
 {
@@ -19,7 +18,11 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
         }
 
         private float timeElapsed;
-        public float TimeEladpsed { get { return timeElapsed; } }
+        public float TimeEladpsed 
+        { 
+            get { return timeElapsed; } 
+            set {  timeElapsed = value; }
+        }
 
         private float frightenedTimeElapsed;
         public float FrightenedTimeElapsed 
@@ -62,6 +65,14 @@ namespace PacMan.Entities.Ghosts.GhostAccessories
                     ghost.MovementMode = Modes.CHASE;    
                 }
             }
+        }
+
+        public void ResetCounter() 
+        {
+            this.timerRunning = timerRunning;
+            this.frightenedTimerRunning = false;
+            this.timeElapsed = (float)0;
+            this.frightenedTimeElapsed = (float)0;
         }
     }
 }

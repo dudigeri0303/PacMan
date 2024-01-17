@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PacMan.PacManGame;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace PacMan
 {
@@ -47,6 +45,11 @@ namespace PacMan
         {
             Map.Map.GetInstance().ResetMap();
             _game = new GameBase();
+        }
+
+        public static void LevelUp() 
+        {
+            _game.LevelUp();
         }
 
         protected override void Initialize()
