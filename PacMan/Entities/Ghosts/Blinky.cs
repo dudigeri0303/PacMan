@@ -13,7 +13,7 @@ namespace PacMan.Entities.Ghosts
             this.houseTargetTile = Map.Map.GetInstance().Tiles[14, 18];
             this.startTargetTile = Map.Map.GetInstance().Tiles[13, 14];
 
-            this.timer = new GhostTimer(true);
+            this.timer = new Timer(true);
         }
 
         protected override void IdleInHouse(Player.Player player, Blinky blinky)

@@ -20,7 +20,7 @@ namespace PacMan.Entities.Ghosts
             this.startTargetTile = Map.Map.GetInstance().Tiles[13, 14];
 
             
-            this.timer = new GhostTimer(false);
+            this.timer = new Timer(false);
         }
 
 
